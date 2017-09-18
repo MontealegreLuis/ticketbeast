@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Concert;
 use Carbon\Carbon;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ConcertTest extends TestCase
 {
@@ -38,5 +37,4 @@ class ConcertTest extends TestCase
 
         $this->assertEquals('25.00', $concert->ticketPriceInDollars);
     }
-    
 }
