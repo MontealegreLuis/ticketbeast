@@ -8,6 +8,7 @@
 
 namespace Tests\Unit\Billing;
 
+use App\Billing\PaymentFailedException;
 use Tests\Feature\FakePaymentGateway;
 use Tests\TestCase;
 
@@ -23,4 +24,13 @@ class FakePaymentGatewayTest extends TestCase
         $this->assertEquals(2500, $paymentGateway->totalCharges());
     }
 
+    /** @test */
+    function it_fails_to_charge_using_an_invalid_token()
+    {
+        $paymentGateway = new FakePaymentGateway();
+
+        $this->expectException(PaymentFailedException::class);
+
+        $paymentGateway->charge(2500, 'invalid-token');
+    }
 }

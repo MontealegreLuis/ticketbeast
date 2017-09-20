@@ -49,6 +49,22 @@ class PurchaseTicketsTest extends TestCase
         $this->assertArrayHasKey('payment_token', $response->decodeResponseJson()['errors']);
     }
 
+    /** @test */
+    function order_is_not_created_if_payment_fails()
+    {
+        $concert = factory(Concert::class)->create(['ticket_price' => 3250]);
+
+        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
+            'email' => 'john@example.com',
+            'ticket_quantity' => 3,
+            'payment_token' => 'invalid-token',
+        ]);
+
+        $this->assertEquals(422, $response->status());
+        $order = $concert->orders()->where('email', 'john@example.com')->first();
+        $this->assertNull($order);
+    }
+
     /* Do not try to use @before, $this->app won't be available */
     function setUp()
     {
