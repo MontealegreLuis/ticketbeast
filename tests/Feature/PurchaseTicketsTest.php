@@ -17,16 +17,6 @@ class PurchaseTicketsTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $paymentGateway;
-
-    /* Do not try to use @before, $this->app won't not available */
-    function setUp()
-    {
-        parent::setUp();
-        $this->paymentGateway = new FakePaymentGateway();
-        $this->app->instance(PaymentGateway::class, $this->paymentGateway);
-    }
-
     /** @test */
     function customer_can_purchase_tickets_for_a_concert()
     {
@@ -46,16 +36,26 @@ class PurchaseTicketsTest extends TestCase
     }
     
     /** @test */
-    function email_is_required_to_purchase_tickets()
+    function cannot_purchase_tickets_with_incomplete_data()
     {
+        $noDataProvided = [];
         $concert = factory(Concert::class)->create();
 
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
-            'ticket_quantity' => 3,
-            'payment_token' => $this->paymentGateway->getValidTestToken(),
-        ]);
+        $response = $this->json('POST', "/concerts/{$concert->id}/orders", $noDataProvided);
 
         $this->assertEquals(422, $response->status());
         $this->assertArrayHasKey('email', $response->decodeResponseJson()['errors']);
+        $this->assertArrayHasKey('ticket_quantity', $response->decodeResponseJson()['errors']);
+        $this->assertArrayHasKey('payment_token', $response->decodeResponseJson()['errors']);
     }
+
+    /* Do not try to use @before, $this->app won't be available */
+    function setUp()
+    {
+        parent::setUp();
+        $this->paymentGateway = new FakePaymentGateway();
+        $this->app->instance(PaymentGateway::class, $this->paymentGateway);
+    }
+
+    private $paymentGateway;
 }

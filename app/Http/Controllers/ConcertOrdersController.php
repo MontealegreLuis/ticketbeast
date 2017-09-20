@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Billing\PaymentGateway;
 use App\Concert;
+use App\Http\Requests\PurchaseTicketsRequest;
 
 class ConcertOrdersController extends Controller
 {
@@ -17,12 +18,8 @@ class ConcertOrdersController extends Controller
         $this->paymentGateway = $paymentGateway;
     }
 
-    public function store($concertId)
+    public function store($concertId, PurchaseTicketsRequest $request)
     {
-        $this->validate(request(), [
-            'email' => 'required'
-        ]);
-
         $concert = Concert::find($concertId);
 
         $ticketQuantity = \request('ticket_quantity');
