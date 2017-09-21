@@ -22,7 +22,7 @@ class ConcertOrdersController extends Controller
     public function store($concertId, PurchaseTicketsRequest $request)
     {
         try {
-            $concert = Concert::find($concertId);
+            $concert = Concert::published()->findOrFail($concertId);
 
             $ticketQuantity = \request('ticket_quantity');
             $amount = $ticketQuantity * $concert->ticket_price;
