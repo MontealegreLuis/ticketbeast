@@ -9,6 +9,7 @@
 namespace Tests\Integration;
 
 use App\Concert;
+use App\NotEnoughTickets;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -41,10 +42,60 @@ class ConcertTest extends TestCase
     function it_orders_tickets()
     {
         $concert = factory(Concert::class)->create();
+        $concert->addTickets(3);
 
         $order = $concert->orderTickets('jane@example.com', 3);
 
         $this->assertEquals('jane@example.com', $order->email);
         $this->assertEquals(3, $order->tickets()->count());
+    }
+
+    /** @test */
+    function it_adds_available_tickets()
+    {
+        $concert = factory(Concert::class)->create();
+
+        $concert->addTickets(50);
+
+        $this->assertEquals(50, $concert->ticketsRemaining());
+    }
+
+    /** @test */
+    function its_remaining_tickets_are_not_related_to_any_order()
+    {
+        $concert = factory(Concert::class)->create();
+        $concert->addTickets(50);
+        $concert->orderTickets('jane@example.com', 30);
+
+        $this->assertEquals(20, $concert->ticketsRemaining());
+    }
+    
+    /** @test */
+    function it_fails_to_order_more_tickets_than_remaining()
+    {
+        $concert = factory(Concert::class)->create();
+        $concert->addTickets(10);
+
+        $this->expectException(NotEnoughTickets::class);
+        $concert->orderTickets('jane@example.com', 30);
+
+        $order = $concert->orders()->where('email', 'jane@example.com')->first();
+        $this->assertNull($order);
+        $this->assertEquals(10, $concert->ticketsRemaining());
+    }
+
+    /** @test */
+    function it_cannot_order_tickets_that_are_already_ordered()
+    {
+        $concert = factory(Concert::class)->create();
+        $concert->addTickets(10);
+
+        $concert->orderTickets('jane@example.com', 8);
+        $this->expectException(NotEnoughTickets::class);
+        $concert->orderTickets('john@example.com', 3);
+
+        $order = $concert->orders()->where('email', 'john@example.com')->first();
+        $this->assertNull($order);
+        $this->assertEquals(2, $concert->ticketsRemaining());
     }
 }

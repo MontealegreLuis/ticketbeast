@@ -23,6 +23,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create([
             'ticket_price' => 3250
         ]);
+        $concert->addTickets(3);
 
         $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
             'email' => 'john@example.com',
@@ -53,7 +54,26 @@ class PurchaseTicketsTest extends TestCase
         $this->assertEquals(0, $this->paymentGateway->totalCharges());
     }
 
-    
+
+    /** @test */
+    function cannot_purchase_more_tickets_than_remain()
+    {
+        $concert = factory(Concert::class)->states('published')->create();
+        $concert->addTickets(50);
+
+        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
+            'email' => 'john@example.com',
+            'ticket_quantity' => 51,
+            'payment_token' => $this->paymentGateway->getValidTestToken(),
+        ]);
+
+        $this->assertEquals(422, $response->status());
+        $order = $concert->orders()->where('email', 'john@example.com')->first();
+        $this->assertNull($order);
+        $this->assertEquals(0, $this->paymentGateway->totalCharges());
+        $this->assertEquals(50, $concert->ticketsRemaining());
+    }
+
     /** @test */
     function cannot_purchase_tickets_with_incomplete_data()
     {
