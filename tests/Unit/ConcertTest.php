@@ -31,10 +31,16 @@ class ConcertTest extends TestCase
     /** @test */
     function it_converts_its_ticket_price_to_dollars()
     {
-        $concert = factory(Concert::class)->make([
-            'ticket_price' => 2500
-        ]);
+        $concert = factory(Concert::class)->make(['ticket_price' => 2500]);
 
         $this->assertEquals('25.00', $concert->ticketPriceInDollars);
+    }
+    
+    /** @test */
+    function it_calculates_the_total_for_tickets()
+    {
+        $concert = factory(Concert::class)->make(['ticket_price' => 2500,]);
+
+        $this->assertEquals(10000, $concert->ticketsTotal(4));
     }
 }

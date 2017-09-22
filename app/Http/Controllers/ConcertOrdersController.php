@@ -10,11 +10,9 @@ use App\NotEnoughTickets;
 
 class ConcertOrdersController extends Controller
 {
+    /** @var PaymentGateway */
     private $paymentGateway;
 
-    /**
-     * @param $paymentGateway
-     */
     public function __construct(PaymentGateway $paymentGateway)
     {
         $this->paymentGateway = $paymentGateway;
@@ -25,11 +23,10 @@ class ConcertOrdersController extends Controller
         try {
             $concert = Concert::published()->findOrFail($concertId);
 
-            $ticketQuantity = \request('ticket_quantity');
-            $concert->orderTickets(\request('email'), $ticketQuantity);
+            $quantity = \request('ticket_quantity');
+            $concert->orderTickets(\request('email'), $quantity);
 
-            $amount = $ticketQuantity * $concert->ticket_price;
-            $this->paymentGateway->charge($amount, request('payment_token'));
+            $this->paymentGateway->charge($concert->ticketsTotal($quantity), request('payment_token'));
 
 
             return response()->json([], 201);
