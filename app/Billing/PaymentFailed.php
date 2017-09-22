@@ -10,6 +10,6 @@ namespace App\Billing;
 
 use RuntimeException;
 
-class PaymentFailedException extends RuntimeException
+class PaymentFailed extends RuntimeException
 {
 }

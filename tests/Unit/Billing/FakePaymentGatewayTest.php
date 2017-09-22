@@ -8,7 +8,7 @@
 
 namespace Tests\Unit\Billing;
 
-use App\Billing\PaymentFailedException;
+use App\Billing\PaymentFailed;
 use Tests\Feature\FakePaymentGateway;
 use Tests\TestCase;
 
@@ -29,7 +29,7 @@ class FakePaymentGatewayTest extends TestCase
     {
         $paymentGateway = new FakePaymentGateway();
 
-        $this->expectException(PaymentFailedException::class);
+        $this->expectException(PaymentFailed::class);
 
         $paymentGateway->charge(2500, 'invalid-token');
     }

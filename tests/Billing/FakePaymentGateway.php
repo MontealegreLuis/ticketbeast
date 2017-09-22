@@ -8,7 +8,7 @@
 
 namespace Tests\Feature;
 
-use App\Billing\PaymentFailedException;
+use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
 
 class FakePaymentGateway implements PaymentGateway
@@ -28,7 +28,7 @@ class FakePaymentGateway implements PaymentGateway
     public function charge($amountInCents, $token)
     {
         if ($token !== $this->getValidTestToken()) {
-            throw new PaymentFailedException("Invalid token '$token' provided");
+            throw new PaymentFailed("Invalid token '$token' provided");
         }
         $this->charges[] = $amountInCents;
     }
