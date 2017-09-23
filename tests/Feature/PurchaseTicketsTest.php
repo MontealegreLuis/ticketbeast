@@ -18,7 +18,7 @@ class PurchaseTicketsTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function customer_can_purchase_tickets_for_a_concert()
+    function customer_can_purchase_tickets_to_a_published_concert()
     {
         $concert = factory(Concert::class)->states('published')->create([
             'ticket_price' => 3250
@@ -39,7 +39,7 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
-    function cannot_purchase_tickets_for_an_unpublished_concert()
+    function cannot_purchase_tickets_to_an_unpublished_concert()
     {
         $concert = factory(Concert::class)->states('unpublished')->create();
 
@@ -54,6 +54,23 @@ class PurchaseTicketsTest extends TestCase
         $this->assertEquals(0, $this->paymentGateway->totalCharges());
     }
 
+    /** @test */
+    function order_is_not_created_if_payment_fails()
+    {
+        $concert = factory(Concert::class)->states('published')->create([
+            'ticket_price' => 3250
+        ]);
+
+        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
+            'email' => 'john@example.com',
+            'ticket_quantity' => 3,
+            'payment_token' => 'invalid-token',
+        ]);
+
+        $this->assertEquals(422, $response->status());
+        $order = $concert->orders()->where('email', 'john@example.com')->first();
+        $this->assertNull($order);
+    }
 
     /** @test */
     function cannot_purchase_more_tickets_than_remain()
@@ -86,24 +103,6 @@ class PurchaseTicketsTest extends TestCase
         $this->assertArrayHasKey('email', $response->decodeResponseJson()['errors']);
         $this->assertArrayHasKey('ticket_quantity', $response->decodeResponseJson()['errors']);
         $this->assertArrayHasKey('payment_token', $response->decodeResponseJson()['errors']);
-    }
-
-    /** @test */
-    function order_is_not_created_if_payment_fails()
-    {
-        $concert = factory(Concert::class)->states('published')->create([
-            'ticket_price' => 3250
-        ]);
-
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
-            'email' => 'john@example.com',
-            'ticket_quantity' => 3,
-            'payment_token' => 'invalid-token',
-        ]);
-
-        $this->assertEquals(422, $response->status());
-        $order = $concert->orders()->where('email', 'john@example.com')->first();
-        $this->assertNull($order);
     }
 
     /* Do not try to use @before, $this->app won't be available */

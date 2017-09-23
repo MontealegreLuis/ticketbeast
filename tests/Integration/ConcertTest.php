@@ -19,7 +19,7 @@ class ConcertTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function it_finds_published_events()
+    function it_finds_published_concerts()
     {
         $publishedConcertA = factory(Concert::class)->create([
             'published_at' =>  Carbon::parse('-1 week'),
