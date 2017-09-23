@@ -20,4 +20,9 @@ class Order extends Model
         }
         $this->delete();
     }
+
+    public function ticketsQuantity()
+    {
+        return $this->tickets()->count();
+    }
 }
