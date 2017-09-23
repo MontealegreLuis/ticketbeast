@@ -8,6 +8,14 @@
 
 namespace App;
 
-class NotEnoughTickets extends \RuntimeException
+use RuntimeException;
+
+class NotEnoughTickets extends RuntimeException
 {
+    public static function available($count, $ticketQuantity)
+    {
+        return new NotEnoughTickets(
+            "Cannot order $ticketQuantity, only $count tickets available"
+        );
+    }
 }

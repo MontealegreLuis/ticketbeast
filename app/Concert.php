@@ -49,7 +49,7 @@ class Concert extends Model
         $tickets = $this->tickets()->available()->take($ticketQuantity)->get();
 
         if ($tickets->count() < $ticketQuantity) {
-            throw new NotEnoughTickets();
+            throw NotEnoughTickets::available($tickets->count(), $ticketQuantity);
         }
 
         $order = $this->orders()->create(['email' => $email]);
