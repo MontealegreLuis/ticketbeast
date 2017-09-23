@@ -12,4 +12,8 @@ use RuntimeException;
 
 class PaymentFailed extends RuntimeException
 {
+    public static function withToken($token)
+    {
+        return new PaymentFailed("Invalid token '$token' provided");
+    }
 }

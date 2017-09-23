@@ -28,7 +28,7 @@ class FakePaymentGateway implements PaymentGateway
     public function charge($amountInCents, $token)
     {
         if ($token !== $this->getValidTestToken()) {
-            throw new PaymentFailed("Invalid token '$token' provided");
+            throw PaymentFailed::withToken($token);
         }
         $this->charges[] = $amountInCents;
     }
