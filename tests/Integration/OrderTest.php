@@ -6,7 +6,7 @@
  * This source file is subject to the license that is bundled with this package in the file LICENSE.
  */
 
-namespace Tests\Unit;
+namespace Tests\Integration;
 
 use App\Concert;
 use App\Order;
@@ -30,5 +30,19 @@ class OrderTest extends TestCase
 
         $this->assertEquals(10, $concert->ticketsRemaining());
         $this->assertNull(Order::find($order->id));
+    }
+
+    /** @test */
+    function it_can_be_converted_to_array()
+    {
+        $concert = factory(Concert::class)->create(['ticket_price' => 1200]);
+        $concert->addTickets(5);
+        $order = $concert->orderTickets('jane@example.com', 5);
+
+        $this->assertEquals([
+            'email' => 'jane@example.com',
+            'ticket_quantity' => 5,
+            'amount' => 6000,
+        ], $order->toArray());
     }
 }
