@@ -20,20 +20,19 @@ class ConcertOrdersController extends Controller
 
     public function store($concertId, PurchaseTicketsRequest $request)
     {
+        $concert = Concert::published()->findOrFail($concertId);
         try {
-            $concert = Concert::published()->findOrFail($concertId);
+            $tickets = $concert->findTickets(\request('ticket_quantity'));
 
-            $quantity = \request('ticket_quantity');
-            $order = $concert->orderTickets(\request('email'), $quantity);
+            $this->paymentGateway->charge(
+                $concert->ticketsTotal($tickets->count()),
+                request('payment_token')
+            );
 
-            $this->paymentGateway->charge($concert->ticketsTotal($quantity), request('payment_token'));
-
+            $order = $concert->createOrder(\request('email'), $tickets);
 
             return response()->json($order->toArray(), 201);
-        } catch (PaymentFailed $exception) {
-            $order->cancel();
-            return response()->json([], 422);
-        } catch (NotEnoughTickets $exception) {
+        } catch (NotEnoughTickets | PaymentFailed $exception) {
             return response()->json([], 422);
         }
     }
