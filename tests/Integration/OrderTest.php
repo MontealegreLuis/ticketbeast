@@ -16,6 +16,21 @@ use Tests\TestCase;
 class OrderTest extends TestCase
 {
     use RefreshDatabase;
+    
+    /** @test */
+    function it_is_created_from_purchase()
+    {
+        $concert = factory(Concert::class)->create(['ticket_price' => 1200]);
+        $concert->addTickets(5);
+        $this->assertEquals(5, $concert->ticketsRemaining());
+
+        $order = Order::forPurchase($concert->findTickets(3), 'jane@example.com');
+
+        $this->assertEquals('jane@example.com', $order->email);
+        $this->assertEquals(3, $order->ticketsQuantity());
+        $this->assertEquals(3600, $order->amount);
+        $this->assertEquals(2, $concert->ticketsRemaining());
+    }
 
     /** @test */
     function it_releases_tickets_if_it_is_cancelled()

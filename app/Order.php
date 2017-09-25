@@ -8,6 +8,19 @@ class Order extends Model
 {
     protected $guarded = [];
 
+    public static function forPurchase($tickets, $email)
+    {
+        $order = self::create([
+            'email' => $email,
+            'amount' => $tickets->sum('price'),
+        ]);
+        foreach ($tickets as $ticket) {
+            $order->tickets()->save($ticket);
+        }
+
+        return $order;
+    }
+
     public function concert()
     {
         return $this->belongsTo(Concert::class);
