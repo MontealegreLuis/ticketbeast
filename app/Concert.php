@@ -52,7 +52,11 @@ class Concert extends Model
             throw NotEnoughTickets::available($tickets->count(), $ticketQuantity);
         }
 
-        $order = $this->orders()->create(['email' => $email]);
+        $order = $this->orders()->create([
+            'email' => $email,
+            'amount' => $ticketQuantity * $this->ticket_price,
+        ]);
+
         foreach ($tickets as $ticket) {
             $order->tickets()->save($ticket);
         }
