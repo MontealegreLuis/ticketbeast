@@ -23,8 +23,9 @@ class OrderTest extends TestCase
         $concert = factory(Concert::class)->create(['ticket_price' => 1200]);
         $concert->addTickets(5);
         $this->assertEquals(5, $concert->ticketsRemaining());
+        $tickets = $concert->findTickets(3);
 
-        $order = Order::forPurchase($concert->findTickets(3), 'jane@example.com');
+        $order = Order::forPurchase($tickets, 'jane@example.com', $tickets->sum('price'));
 
         $this->assertEquals('jane@example.com', $order->email);
         $this->assertEquals(3, $order->ticketsQuantity());

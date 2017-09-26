@@ -8,6 +8,7 @@ use App\Concert;
 use App\Http\Requests\PurchaseTicketsRequest;
 use App\NotEnoughTickets;
 use App\Order;
+use App\Reservation;
 
 class ConcertOrdersController extends Controller
 {
@@ -24,10 +25,11 @@ class ConcertOrdersController extends Controller
         $concert = Concert::published()->findOrFail($concertId);
         try {
             $tickets = $concert->findTickets(\request('ticket_quantity'));
+            $reservation = new Reservation($tickets);
 
-            $this->paymentGateway->charge($tickets->sum('price'), request('payment_token'));
+            $this->paymentGateway->charge($reservation->totalCost(), request('payment_token'));
 
-            $order = Order::forPurchase($tickets, \request('email'));
+            $order = Order::forPurchase($tickets, \request('email'), $reservation->totalCost());
 
             return response()->json($order->toArray(), 201);
         } catch (NotEnoughTickets | PaymentFailed $exception) {
