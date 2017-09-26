@@ -25,10 +25,7 @@ class ConcertOrdersController extends Controller
         try {
             $tickets = $concert->findTickets(\request('ticket_quantity'));
 
-            $this->paymentGateway->charge(
-                $concert->ticketsTotal($tickets->count()),
-                request('payment_token')
-            );
+            $this->paymentGateway->charge($tickets->sum('price'), request('payment_token'));
 
             $order = Order::forPurchase($tickets, \request('email'));
 

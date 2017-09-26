@@ -39,11 +39,6 @@ class Concert extends Model
         return $this->hasMany(Ticket::class);
     }
 
-    public function ticketsTotal($quantity)
-    {
-        return $this->ticket_price * $quantity;
-    }
-
     public function orderTickets($email, $ticketQuantity)
     {
         $tickets = $this->findTickets($ticketQuantity);
