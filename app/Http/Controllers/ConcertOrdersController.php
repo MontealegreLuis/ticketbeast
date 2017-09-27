@@ -7,8 +7,6 @@ use App\Billing\PaymentGateway;
 use App\Concert;
 use App\Http\Requests\PurchaseTicketsRequest;
 use App\NotEnoughTickets;
-use App\Order;
-use App\Reservation;
 
 class ConcertOrdersController extends Controller
 {
@@ -26,11 +24,9 @@ class ConcertOrdersController extends Controller
         try {
             $reservation = $concert->reserveTickets(\request('ticket_quantity'), \request('email'));
 
-            $this->paymentGateway->charge($reservation->totalCost(), request('payment_token'));
+            $order = $reservation->complete($this->paymentGateway, \request('payment_token'));
 
-            $order = $reservation->complete();
-
-            return response()->json($order->toArray(), 201);
+            return response()->json($order, 201);
         } catch (PaymentFailed $exception) {
             $reservation->cancel();
             return response()->json([], 422);

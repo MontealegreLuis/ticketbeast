@@ -41,8 +41,9 @@ class Reservation
         });
     }
 
-    public function complete()
+    public function complete($paymentGateway, $paymentToken)
     {
+        $paymentGateway->charge($this->totalCost(), $paymentToken);
         return Order::forPurchase($this->tickets(), $this->email(), $this->totalCost());
     }
 }
