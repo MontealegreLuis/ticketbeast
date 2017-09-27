@@ -1,11 +1,15 @@
 <?php
-
+/**
+ * PHP version 7.1
+ *
+ * This source file is subject to the license that is bundled with this package in the file LICENSE.
+ */
 namespace Tests\Feature;
 
 use App\Concert;
 use Carbon\Carbon;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ViewConcertsListingTest extends TestCase
 {

@@ -1,16 +1,15 @@
 <?php
-
 /**
  * PHP version 7.1
  *
  * This source file is subject to the license that is bundled with this package in the file LICENSE.
  */
-
 namespace Tests\Feature;
 
 use App\Billing\PaymentGateway;
 use App\Concert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
 
 class PurchaseTicketsTest extends TestCase
@@ -25,11 +24,7 @@ class PurchaseTicketsTest extends TestCase
         ]);
         $concert->addTickets(3);
 
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
-            'email' => 'john@example.com',
-            'ticket_quantity' => 3,
-            'payment_token' => $this->paymentGateway->getValidTestToken(),
-        ]);
+        $response = $this->orderTicketsFor($concert);
 
         $this->assertEquals(201, $response->status());
         $response->assertJson([
@@ -47,11 +42,7 @@ class PurchaseTicketsTest extends TestCase
     {
         $concert = factory(Concert::class)->states('unpublished')->create();
 
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
-            'email' => 'john@example.com',
-            'ticket_quantity' => 3,
-            'payment_token' => $this->paymentGateway->getValidTestToken(),
-        ]);
+        $response = $this->orderTicketsFor($concert);
 
         $this->assertEquals(404, $response->status());
         $this->assertFalse($concert->hasOrderFor('john@example.com'));
@@ -64,11 +55,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create();
         $concert->addTickets(3);
 
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
-            'email' => 'john@example.com',
-            'ticket_quantity' => 3,
-            'payment_token' => 'invalid-token',
-        ]);
+        $response = $this->orderTicketsFor($concert, ['payment_token' => 'invalid-token']);
 
         $this->assertEquals(422, $response->status());
         $this->assertFalse($concert->hasOrderFor('john@example.com'));
@@ -81,11 +68,7 @@ class PurchaseTicketsTest extends TestCase
         $concert = factory(Concert::class)->states('published')->create();
         $concert->addTickets(50);
 
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
-            'email' => 'john@example.com',
-            'ticket_quantity' => 51,
-            'payment_token' => $this->paymentGateway->getValidTestToken(),
-        ]);
+        $response = $this->orderTicketsFor($concert, ['ticket_quantity' => 51]);
 
         $this->assertEquals(422, $response->status());
         $this->assertFalse($concert->hasOrderFor('john@example.com'));
@@ -103,23 +86,16 @@ class PurchaseTicketsTest extends TestCase
         $concert->addTickets(3);
 
         $this->paymentGateway->beforeCharge(function ($paymentGateway) use ($concert) {
-            $savedRequest = $this->app['request'];
-            $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
+            $response = $this->orderTicketsFor($concert, [
                 'email' => 'jane@example.com',
                 'ticket_quantity' => 1,
-                'payment_token' => $paymentGateway->getValidTestToken(),
             ]);
-            $this->app['request'] = $savedRequest;
             $this->assertEquals(422, $response->status());
             $this->assertFalse($concert->hasOrderFor('jane@example.com'));
             $this->assertEquals(0, $this->paymentGateway->totalCharges());
         });
 
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
-            'email' => 'john@example.com',
-            'ticket_quantity' => 3,
-            'payment_token' => $this->paymentGateway->getValidTestToken(),
-        ]);
+        $response = $this->orderTicketsFor($concert);
         $this->assertEquals(201, $response->status());
         $this->assertEquals(3600, $this->paymentGateway->totalCharges());
         $this->assertTrue($concert->hasOrderFor('john@example.com'));
@@ -129,10 +105,10 @@ class PurchaseTicketsTest extends TestCase
     /** @test */
     function cannot_purchase_tickets_with_incomplete_data()
     {
-        $noDataProvided = [];
+        $noData = [];
         $concert = factory(Concert::class)->create();
 
-        $response = $this->json('POST', "/concerts/{$concert->id}/orders", $noDataProvided);
+        $response = $this->json('POST', "/concerts/{$concert->id}/orders", $noData);
 
         $this->assertEquals(422, $response->status());
         $this->assertArrayHasKey('email', $response->decodeResponseJson()['errors']);
@@ -148,5 +124,25 @@ class PurchaseTicketsTest extends TestCase
         $this->app->instance(PaymentGateway::class, $this->paymentGateway);
     }
 
+    private function orderTicketsFor(Concert $concert, array $purchase = []): TestResponse
+    {
+        $defaults = [
+            'email' => 'john@example.com',
+            'ticket_quantity' => 3,
+            'payment_token' => $this->paymentGateway->getValidTestToken(),
+        ];
+
+        $savedRequest = $this->app['request'];
+        $response = $this->json(
+            'POST',
+            "/concerts/{$concert->id}/orders",
+            array_merge($defaults, $purchase)
+        );
+        $this->app['request'] = $savedRequest;
+
+        return $response;
+    }
+
+    /** @var FakePaymentGateway */
     private $paymentGateway;
 }
