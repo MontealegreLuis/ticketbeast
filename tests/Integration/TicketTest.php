@@ -48,7 +48,7 @@ class TicketTest extends TestCase
         $concert->orderTickets('jane@example.com', 2);
 
         $this->expectException(NotEnoughTickets::class);
-        $concert->reserveTickets(2);
+        $concert->reserveTickets(2, 'john@example.com');
         $this->assertEquals(1, $concert->ticketsRemaining());
     }
 
@@ -57,10 +57,10 @@ class TicketTest extends TestCase
     {
         $concert = factory(Concert::class)->create();
         $concert->addTickets(3);
-        $concert->reserveTickets(2);
+        $concert->reserveTickets(2, 'john@example.com');
 
         $this->expectException(NotEnoughTickets::class);
-        $concert->reserveTickets(2);
+        $concert->reserveTickets(2, 'jane@example.com');
         $this->assertEquals(1, $concert->ticketsRemaining());
     }
 }

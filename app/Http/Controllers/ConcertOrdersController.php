@@ -24,11 +24,11 @@ class ConcertOrdersController extends Controller
     {
         $concert = Concert::published()->findOrFail($concertId);
         try {
-            $reservation = $concert->reserveTickets(\request('ticket_quantity'));
+            $reservation = $concert->reserveTickets(\request('ticket_quantity'), \request('email'));
 
             $this->paymentGateway->charge($reservation->totalCost(), request('payment_token'));
 
-            $order = Order::forPurchase($reservation->tickets(), \request('email'), $reservation->totalCost());
+            $order = Order::forPurchase($reservation->tickets(), $reservation->email(), $reservation->totalCost());
 
             return response()->json($order->toArray(), 201);
         } catch (PaymentFailed $exception) {
