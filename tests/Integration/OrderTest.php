@@ -34,21 +34,6 @@ class OrderTest extends TestCase
     }
 
     /** @test */
-    function it_releases_tickets_if_it_is_cancelled()
-    {
-        $concert = factory(Concert::class)->create();
-        $concert->addTickets(10);
-
-        $order = $concert->orderTickets('jane@example.com', 5);
-        $this->assertEquals(5, $concert->ticketsRemaining());
-
-        $order->cancel();
-
-        $this->assertEquals(10, $concert->ticketsRemaining());
-        $this->assertNull(Order::find($order->id));
-    }
-
-    /** @test */
     function it_can_be_converted_to_array()
     {
         $concert = factory(Concert::class)->create(['ticket_price' => 1200]);
