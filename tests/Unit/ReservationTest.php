@@ -6,7 +6,7 @@
  * This source file is subject to the license that is bundled with this package in the file LICENSE.
  */
 
-namespace Tests\Integration;
+namespace Tests\Unit;
 
 use App\Reservation;
 use App\Ticket;
@@ -48,7 +48,6 @@ class ReservationTest extends TestCase
 
         $this->assertEquals('jane@example.com', $reservation->email());
     }
-
 
     /** @test */
     function it_releases_its_tickets_when_it_is_cancelled()

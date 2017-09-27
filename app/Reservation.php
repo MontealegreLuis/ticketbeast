@@ -40,4 +40,9 @@ class Reservation
             $ticket->release();
         });
     }
+
+    public function complete()
+    {
+        return Order::forPurchase($this->tickets(), $this->email(), $this->totalCost());
+    }
 }
