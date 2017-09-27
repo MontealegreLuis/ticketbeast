@@ -9,6 +9,8 @@
 namespace Tests\Unit;
 
 use App\Concert;
+use App\NotEnoughTickets;
+use App\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -28,5 +30,40 @@ class TicketTest extends TestCase
         $ticket->release();
 
         $this->assertNull($ticket->fresh()->order_id);
+    }
+
+    /** @test */
+    function it_can_be_reserved()
+    {
+        $ticket = factory(Ticket::class)->create();
+        $this->assertNull($ticket->reserved_at);
+
+        $ticket->reserve();
+
+        $this->assertNotNull($ticket->reserved_at);
+    }
+
+    /** @test */
+    function it_cannot_be_reserved_if_it_is_already_purchased()
+    {
+        $concert = factory(Concert::class)->create();
+        $concert->addTickets(3);
+        $concert->orderTickets('jane@example.com', 2);
+
+        $this->expectException(NotEnoughTickets::class);
+        $concert->reserveTickets(2);
+        $this->assertEquals(1, $concert->ticketsRemaining());
+    }
+
+    /** @test */
+    function it_cannot_be_reserved_if_it_is_already_reserved()
+    {
+        $concert = factory(Concert::class)->create();
+        $concert->addTickets(3);
+        $concert->reserveTickets(2);
+
+        $this->expectException(NotEnoughTickets::class);
+        $concert->reserveTickets(2);
+        $this->assertEquals(1, $concert->ticketsRemaining());
     }
 }
