@@ -94,6 +94,39 @@ class PurchaseTicketsTest extends TestCase
     }
 
     /** @test */
+    function cannot_purchase_tickets_another_customer_is_already_trying_to_purchase()
+    {
+        $this->withoutExceptionHandling();
+        $concert = factory(Concert::class)->states('published')->create([
+            'ticket_price' => 1200
+        ]);
+        $concert->addTickets(3);
+
+        $this->paymentGateway->beforeCharge(function ($paymentGateway) use ($concert) {
+            $savedRequest = $this->app['request'];
+            $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
+                'email' => 'jane@example.com',
+                'ticket_quantity' => 1,
+                'payment_token' => $paymentGateway->getValidTestToken(),
+            ]);
+            $this->app['request'] = $savedRequest;
+            $this->assertEquals(422, $response->status());
+            $this->assertFalse($concert->hasOrderFor('jane@example.com'));
+            $this->assertEquals(0, $this->paymentGateway->totalCharges());
+        });
+
+        $response = $this->json('POST', "/concerts/{$concert->id}/orders", [
+            'email' => 'john@example.com',
+            'ticket_quantity' => 3,
+            'payment_token' => $this->paymentGateway->getValidTestToken(),
+        ]);
+        $this->assertEquals(201, $response->status());
+        $this->assertEquals(3600, $this->paymentGateway->totalCharges());
+        $this->assertTrue($concert->hasOrderFor('john@example.com'));
+        $this->assertEquals(3, $concert->orderFor('john@example.com')->first()->ticketsQuantity());
+    }
+
+    /** @test */
     function cannot_purchase_tickets_with_incomplete_data()
     {
         $noDataProvided = [];
