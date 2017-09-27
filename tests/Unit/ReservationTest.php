@@ -9,6 +9,8 @@
 namespace Tests\Integration;
 
 use App\Reservation;
+use App\Ticket;
+use Mockery;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -24,5 +26,22 @@ class ReservationTest extends TestCase
         $reservation = new Reservation($tickets);
 
         $this->assertEquals(3600, $reservation->totalCost());
+    }
+    
+    /** @test */
+    function it_releases_its_tickets_when_it_is_cancelled()
+    {
+        $tickets = collect([
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class)
+        ]);
+        $reservation = new Reservation($tickets);
+
+        $reservation->cancel();
+
+        $tickets->each(function ($ticket) {
+            $ticket->shouldHaveReceived('release');
+        });
     }
 }
