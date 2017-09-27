@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PHP version 7.1
  *
@@ -12,7 +11,7 @@ use RuntimeException;
 
 class PaymentFailed extends RuntimeException
 {
-    public static function withToken($token)
+    public static function withToken($token): PaymentFailed
     {
         return new PaymentFailed("Invalid token '$token' provided");
     }

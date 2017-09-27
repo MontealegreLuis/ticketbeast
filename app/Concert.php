@@ -1,13 +1,74 @@
 <?php
-
+/**
+ * PHP version 7.1
+ *
+ * This source file is subject to the license that is bundled with this package in the file LICENSE.
+ */
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Concert extends Model
 {
     protected $guarded = [];
     protected $dates = ['date'];
+
+    public function reserveTickets(int $quantity, string $email): Reservation
+    {
+        $tickets = $this->findTickets($quantity)->each(function (Ticket $ticket) {
+            $ticket->reserve();
+        });
+
+        return new Reservation($tickets, $email);
+    }
+
+    /**
+     * @throws \App\NotEnoughTickets
+     */
+    public function findTickets(int $quantity): Collection
+    {
+        $tickets = $this->tickets()->available()->take($quantity)->get();
+        if ($tickets->count() < $quantity) {
+            throw NotEnoughTickets::available($tickets->count(), $quantity);
+        }
+
+        return $tickets;
+    }
+
+    public function createOrder($email, $tickets)
+    {
+        return Order::forPurchase($tickets, $email, $tickets->sum('price'));
+    }
+
+    public function addTickets($quantity)
+    {
+        foreach (range(1, $quantity) as $_) {
+            $this->tickets()->create();
+        }
+    }
+
+    public function ticketsRemaining()
+    {
+        return $this->tickets()->available()->count();
+    }
+
+    public function orderTickets($email, $ticketQuantity)
+    {
+        $tickets = $this->findTickets($ticketQuantity);
+
+        return $this->createOrder($email, $tickets);
+    }
+
+    public function hasOrderFor($email)
+    {
+        return $this->orders()->where('email', $email)->count() > 0;
+    }
+
+    public function orderFor($email)
+    {
+        return $this->orders()->where('email', $email)->get();
+    }
 
     public function getFormattedDateAttribute()
     {
@@ -37,58 +98,5 @@ class Concert extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
-    }
-
-    public function orderTickets($email, $ticketQuantity)
-    {
-        $tickets = $this->findTickets($ticketQuantity);
-
-        return $this->createOrder($email, $tickets);
-    }
-
-    public function reserveTickets($quantity, $email)
-    {
-        $tickets = $this->findTickets($quantity)->each(function ($ticket) {
-            $ticket->reserve();
-        });
-
-        return new Reservation($tickets, $email);
-    }
-
-    public function findTickets($quantity)
-    {
-        $tickets = $this->tickets()->available()->take($quantity)->get();
-        if ($tickets->count() < $quantity) {
-            throw NotEnoughTickets::available($tickets->count(), $quantity);
-        }
-
-        return $tickets;
-    }
-
-    public function createOrder($email, $tickets)
-    {
-        return Order::forPurchase($tickets, $email, $tickets->sum('price'));
-    }
-
-    public function addTickets($quantity)
-    {
-        foreach (range(1, $quantity) as $_) {
-            $this->tickets()->create();
-        }
-    }
-
-    public function ticketsRemaining()
-    {
-        return $this->tickets()->available()->count();
-    }
-
-    public function hasOrderFor($email)
-    {
-        return $this->orders()->where('email', $email)->count() > 0;
-    }
-
-    public function orderFor($email)
-    {
-        return $this->orders()->where('email', $email)->get();
     }
 }

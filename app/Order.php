@@ -1,14 +1,19 @@
 <?php
-
+/**
+ * PHP version 7.1
+ *
+ * This source file is subject to the license that is bundled with this package in the file LICENSE.
+ */
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Order extends Model
 {
     protected $guarded = [];
 
-    public static function forPurchase($tickets, $email, $amount)
+    public static function forPurchase(Collection $tickets, string $email, int $amount): Order
     {
         $order = self::create([
             'email' => $email,

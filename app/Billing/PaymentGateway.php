@@ -9,9 +9,7 @@ namespace App\Billing;
 
 interface PaymentGateway
 {
-    public function getValidTestToken();
+    public function charge(int $amountInCents, string $validToken): void;
 
-    public function charge($amountInCents, $validTestToken);
-
-    public function totalCharges();
+    public function totalCharges(): int;
 }

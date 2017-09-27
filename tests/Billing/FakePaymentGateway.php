@@ -1,11 +1,9 @@
 <?php
-
 /**
  * PHP version 7.1
  *
  * This source file is subject to the license that is bundled with this package in the file LICENSE.
  */
-
 namespace Tests\Feature;
 
 use App\Billing\PaymentFailed;
@@ -13,7 +11,10 @@ use App\Billing\PaymentGateway;
 
 class FakePaymentGateway implements PaymentGateway
 {
+    /** @var \Illuminate\Support\Collection  */
     private $charges;
+
+    /** @var callable */
     private $beforeChargeCallback;
 
     public function __construct()
@@ -21,12 +22,12 @@ class FakePaymentGateway implements PaymentGateway
         $this->charges = collect();
     }
 
-    public function getValidTestToken()
+    public function getValidTestToken(): string
     {
         return 'valid-token';
     }
 
-    public function charge($amountInCents, $token)
+    public function charge(int $amountInCents, string $token): void
     {
         if (is_callable($this->beforeChargeCallback)) {
             $callback = $this->beforeChargeCallback;
@@ -39,12 +40,12 @@ class FakePaymentGateway implements PaymentGateway
         $this->charges[] = $amountInCents;
     }
 
-    public function totalCharges()
+    public function totalCharges(): int
     {
         return $this->charges->sum();
     }
 
-    public function beforeCharge($callback)
+    public function beforeCharge(callable $callback): void
     {
         $this->beforeChargeCallback = $callback;
     }

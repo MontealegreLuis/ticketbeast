@@ -20,6 +20,7 @@ class ConcertOrdersController extends Controller
 
     public function store($concertId, PurchaseTicketsRequest $request)
     {
+        /** @var \App\Concert $concert */
         $concert = Concert::published()->findOrFail($concertId);
         try {
             $reservation = $concert->reserveTickets(\request('ticket_quantity'), \request('email'));
