@@ -14,6 +14,7 @@ use App\Billing\PaymentGateway;
 class FakePaymentGateway implements PaymentGateway
 {
     private $charges;
+    private $beforeChargeCallback;
 
     public function __construct()
     {
@@ -27,6 +28,9 @@ class FakePaymentGateway implements PaymentGateway
 
     public function charge($amountInCents, $token)
     {
+        if (is_callable($this->beforeChargeCallback)) {
+            $this->beforeChargeCallback->__invoke($this);
+        }
         if ($token !== $this->getValidTestToken()) {
             throw PaymentFailed::withToken($token);
         }
@@ -36,5 +40,10 @@ class FakePaymentGateway implements PaymentGateway
     public function totalCharges()
     {
         return $this->charges->sum();
+    }
+
+    public function beforeFirstCharge($callback)
+    {
+        $this->beforeChargeCallback = $callback;
     }
 }
