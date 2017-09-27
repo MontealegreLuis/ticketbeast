@@ -61,6 +61,18 @@ class ConcertTest extends TestCase
     }
 
     /** @test */
+    function it_reserves_tickets()
+    {
+        $concert = factory(Concert::class)->create();
+        $concert->addTickets(3);
+
+        $reservation = $concert->reserveTickets(2);
+
+        $this->assertCount(2, $reservation->tickets());
+        $this->assertEquals(1, $concert->ticketsRemaining());
+    }
+
+    /** @test */
     function its_remaining_tickets_are_not_related_to_any_order()
     {
         $concert = factory(Concert::class)->create();
