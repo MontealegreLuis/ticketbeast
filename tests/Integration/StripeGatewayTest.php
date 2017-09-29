@@ -7,6 +7,7 @@
 
 namespace Tests\Integration;
 
+use App\Billing\PaymentFailed;
 use App\Billing\StripePaymentGateway;
 use function config;
 use Stripe\Charge;
@@ -24,6 +25,17 @@ class StripeGatewayTest extends TestCase
 
         $this->assertCount(1, $this->newCharges());
         $this->assertEquals(2500, $this->lastCharge()->amount);
+    }
+
+    /** @test */
+    function it_fails_to_charge_using_an_invalid_token()
+    {
+        $paymentGateway = new StripePaymentGateway(config("services.stripe.secret"));
+
+        $this->expectException(PaymentFailed::class);
+        $paymentGateway->charge(2500, 'invalid-token');
+
+        $this->assertCount(0, $this->newCharges());
     }
 
     protected function setUp()
