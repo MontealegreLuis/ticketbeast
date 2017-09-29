@@ -32,9 +32,4 @@ class StripePaymentGateway implements PaymentGateway
             throw new PaymentFailed($e);
         }
     }
-
-    public function totalCharges(): int
-    {
-        return 0;
-    }
 }
