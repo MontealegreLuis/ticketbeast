@@ -2,7 +2,11 @@
  * This source file is subject to the license that is bundled with this package in the file LICENSE.
  */
 (function () {
-    document.getElementById("buy-tickets").addEventListener('click', chargeUser);
+    $("#tickets-quantity").on("change", updatePaymentAmount);
+    //document.getElementById("buy-tickets").addEventListener('click', chargeUser);
+    function updatePaymentAmount() {
+        $("#stripe-form").attr("data-amount", $(this).val() * $(this).data("price"));
+    }
     function chargeUser () {
         var stripe = Stripe('pk_test_qNELjqOYTWiuiNQ4kS2jMNGz');
         stripe.elements();

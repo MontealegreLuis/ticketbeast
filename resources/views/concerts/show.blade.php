@@ -36,13 +36,32 @@
                 <p class="lead text-muted">
                     &nbsp;{{ $concert->additional_information }}
                 </p>
+                <div class="form-group">
+                    <label class="lead">
+                        <span class="glyphicon glyphicon-tag"></span>
+                        Tickets
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="tickets-quantity"
+                        data-price="{{ $concert->ticketPriceInDollars }}"
+                    >
+                </div>
             </div>
-            <button
-                id="buy-tickets"
-                class="btn btn-primary btn-block"
-            >
-                Buy tickets
-            </button>
+            <form action="/concerts/{{ $concert->id }}/orders" method="POST">
+                <script
+                    id="stripe-form"
+                    src="https://checkout.stripe.com/checkout.js"
+                    class="stripe-button"
+                    data-key="pk_test_qNELjqOYTWiuiNQ4kS2jMNGz"
+                    data-amount="0"
+                    data-name="Ticketbeast"
+                    data-description="Orders Widget"
+                    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                    data-locale="auto">
+                </script>
+            </form>
         </div>
     </div>
 @endsection
