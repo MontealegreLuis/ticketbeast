@@ -1,11 +1,17 @@
 @extends('layouts.master')
 
+@section('csrf')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
+
 @section('content')
     <div class="col-md-offset-3 col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h1>{{ $concert->title }}</h1>
-                <h2><small>{{ $concert->subtitle }}</small></h2>
+                <h1 id="concert-title">{{ $concert->title }}</h1>
+                <h2>
+                    <small>{{ $concert->subtitle }}</small>
+                </h2>
             </div>
             <div class="panel-body">
                 <p class="lead">
@@ -36,32 +42,27 @@
                 <p class="lead text-muted">
                     &nbsp;{{ $concert->additional_information }}
                 </p>
-                <div class="form-group">
-                    <label class="lead">
-                        <span class="glyphicon glyphicon-tag"></span>
-                        Tickets
-                    </label>
-                    <input
-                        type="number"
-                        class="form-control"
-                        id="tickets-quantity"
-                        data-price="{{ $concert->ticketPriceInDollars }}"
-                    >
-                </div>
+
+                <form action="/concerts/{{ $concert->id }}/orders" method="POST">
+                    <input type="hidden" id="concert-id" value="{{ $concert->id }}">
+                    <div class="row">
+                        <div class="col-xs-6 form-group">
+                            <label>Price</label>
+                            <span class="form-control" id="ticket-price">
+                                ${{ $concert->ticketPriceInDollars }}
+                            </span>
+                        </div>
+                        <div class="col-xs-6 form-group">
+                            <label for="quantity">Qty</label>
+                            <input class="form-control" id="quantity">
+                        </div>
+                        <button class="btn btn-primary btn-block" id="buy-tickets">
+                            Buy Tickets
+                        </button>
+                    </div>
+                    <script src="https://checkout.stripe.com/checkout.js"></script>
+                </form>
             </div>
-            <form action="/concerts/{{ $concert->id }}/orders" method="POST">
-                <script
-                    id="stripe-form"
-                    src="https://checkout.stripe.com/checkout.js"
-                    class="stripe-button"
-                    data-key="pk_test_qNELjqOYTWiuiNQ4kS2jMNGz"
-                    data-amount="0"
-                    data-name="Ticketbeast"
-                    data-description="Orders Widget"
-                    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-                    data-locale="auto">
-                </script>
-            </form>
         </div>
     </div>
 @endsection
