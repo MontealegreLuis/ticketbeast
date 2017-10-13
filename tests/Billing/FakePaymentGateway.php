@@ -49,4 +49,11 @@ class FakePaymentGateway implements PaymentGateway
     {
         $this->beforeChargeCallback = $callback;
     }
+
+    public function newChargesDuring(callable $callback)
+    {
+        $chargesFrom = $this->charges->count();
+        $callback($this);
+        return $this->charges->slice($chargesFrom)->values();
+    }
 }

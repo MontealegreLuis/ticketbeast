@@ -9,4 +9,8 @@ namespace App\Billing;
 interface PaymentGateway
 {
     public function charge(int $amountInCents, string $validToken): void;
+
+    public function getValidTestToken(): string;
+
+    public function newChargesDuring(callable $callback);
 }
