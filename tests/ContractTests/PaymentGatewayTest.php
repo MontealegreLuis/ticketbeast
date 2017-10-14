@@ -6,6 +6,7 @@
  */
 namespace Tests\ContractTests;
 
+use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
 use Tests\TestCase;
 
@@ -38,6 +39,23 @@ abstract class PaymentGatewayTest extends TestCase
 
         $this->assertCount(2, $newCharges);
         $this->assertEquals([5000, 4000], $newCharges->all());
+    }
+
+    /** @test */
+    function it_fails_to_charge_using_an_invalid_token()
+    {
+        $paymentGateway = $this->newPaymentGateway();
+
+        $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
+            try {
+                $paymentGateway->charge(2500, 'invalid-token');
+            } catch (PaymentFailed $ignore) {
+                return;
+            }
+            $this->fail('Charging with an invalid token did not throw PaymentFailed');
+        });
+
+        $this->assertCount(0, $newCharges);
     }
 
     abstract function newPaymentGateway(): PaymentGateway;

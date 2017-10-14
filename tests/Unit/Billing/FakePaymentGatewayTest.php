@@ -6,7 +6,6 @@
  */
 namespace Tests\Unit\Billing;
 
-use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
 use Tests\ContractTests\PaymentGatewayTest;
 use Tests\Feature\FakePaymentGateway;
@@ -14,19 +13,9 @@ use Tests\Feature\FakePaymentGateway;
 class FakePaymentGatewayTest extends PaymentGatewayTest
 {
     /** @test */
-    function it_fails_to_charge_using_an_invalid_token()
-    {
-        $paymentGateway = $this->newPaymentGateway();
-
-        $this->expectException(PaymentFailed::class);
-
-        $paymentGateway->charge(2500, 'invalid-token');
-    }
-    
-    /** @test */
     function it_can_execute_a_hook_before_charging()
     {
-        $paymentGateway = $this->newPaymentGateway();
+        $paymentGateway = new FakePaymentGateway();
         $timesCallbackRan = 0;
 
         $paymentGateway->beforeCharge(function ($paymentGateway) use (&$timesCallbackRan) {
