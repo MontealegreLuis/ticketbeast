@@ -8,40 +8,11 @@ namespace Tests\Unit\Billing;
 
 use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
+use Tests\ContractTests\PaymentGatewayTest;
 use Tests\Feature\FakePaymentGateway;
-use Tests\TestCase;
 
-class FakePaymentGatewayTest extends TestCase
+class FakePaymentGatewayTest extends PaymentGatewayTest
 {
-    /** @test */
-    function can_fetch_charges_created_during_a_callback()
-    {
-        $paymentGateway = $this->newPaymentGateway();
-        $paymentGateway->charge(2000, $paymentGateway->getValidTestToken());
-        $paymentGateway->charge(3000, $paymentGateway->getValidTestToken());
-
-        $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
-                $paymentGateway->charge(4000, $paymentGateway->getValidTestToken());
-                $paymentGateway->charge(5000, $paymentGateway->getValidTestToken());
-            });
-
-        $this->assertCount(2, $newCharges);
-        $this->assertEquals([4000, 5000], $newCharges->all());
-    }
-
-    /** @test */
-    function it_charges_successfully_using_a_valid_token()
-    {
-        $paymentGateway = $this->newPaymentGateway();
-
-        $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
-            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
-        });
-
-        $this->assertCount(1, $newCharges);
-        $this->assertEquals(2500, $newCharges->sum());
-    }
-
     /** @test */
     function it_fails_to_charge_using_an_invalid_token()
     {
@@ -70,7 +41,7 @@ class FakePaymentGatewayTest extends TestCase
         $this->assertEquals(5000, $paymentGateway->totalCharges());
     }
 
-    private function newPaymentGateway(): PaymentGateway
+    function newPaymentGateway(): PaymentGateway
     {
         return new FakePaymentGateway();
     }

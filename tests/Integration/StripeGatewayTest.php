@@ -10,24 +10,11 @@ use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
 use App\Billing\StripePaymentGateway;
 use Stripe\Charge;
-use Tests\TestCase;
+use Tests\ContractTests\PaymentGatewayTest;
 use function config;
 
-class StripeGatewayTest extends TestCase
+class StripeGatewayTest extends PaymentGatewayTest
 {
-    /** @test */
-    function it_charges_successfully_using_a_valid_token()
-    {
-        $paymentGateway = $this->newPaymentGateway();
-
-        $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
-            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
-        });
-
-        $this->assertCount(1, $newCharges);
-        $this->assertEquals(2500, $newCharges->sum());
-    }
-
     /** @test */
     function it_fails_to_charge_using_an_invalid_token()
     {
@@ -61,7 +48,7 @@ class StripeGatewayTest extends TestCase
         )['data'];
     }
 
-    private function newPaymentGateway(): PaymentGateway
+    function newPaymentGateway(): PaymentGateway
     {
         return new StripePaymentGateway(config("services.stripe.secret"));
     }
