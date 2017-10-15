@@ -8,6 +8,7 @@ namespace Tests\Integration;
 
 use App\Concert;
 use App\Order;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,4 +45,24 @@ class OrderTest extends TestCase
             'amount' => 6000,
         ], $order->toArray());
     }
+
+    /** @test */
+    function it_can_be_found_by_its_confirmation_number()
+    {
+        $order = factory(Order::class)->create([
+            'confirmation_number' => 'order_confirmation_1234',
+        ]);
+
+        $foundOrder = Order::withConfirmationNumber('order_confirmation_1234');
+
+        $this->assertEquals($order->id, $foundOrder->id);
+    }
+
+    /** @test */
+    function it_fails_to_find_an_order_with_an_unknown_confirmation_number()
+    {
+        $this->expectException(ModelNotFoundException::class);
+        Order::withConfirmationNumber('unknown_confirmation_number');
+    }
+
 }
