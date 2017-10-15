@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PHP version 7.1
  *
@@ -8,9 +7,8 @@
 
 use App\Concert;
 use Carbon\Carbon;
-use Faker\Generator as Faker;
 
-$factory->define(Concert::class, function (Faker $faker) {
+$factory->define(Concert::class, function () {
 
     return [
         'title' => 'Example Band',
@@ -26,13 +24,13 @@ $factory->define(Concert::class, function (Faker $faker) {
     ];
 });
 
-$factory->state(Concert::class, 'published', function ($faker) {
+$factory->state(Concert::class, 'published', function () {
     return [
         'published_at' => Carbon::parse('-1 week'),
     ];
 });
 
-$factory->state(Concert::class, 'unpublished', function ($faker) {
+$factory->state(Concert::class, 'unpublished', function () {
     return [
         'published_at' => null,
     ];

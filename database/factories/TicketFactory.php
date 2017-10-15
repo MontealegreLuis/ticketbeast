@@ -4,13 +4,11 @@
  *
  * This source file is subject to the license that is bundled with this package in the file LICENSE.
  */
-
 use App\Concert;
 use App\Ticket;
-use Faker\Generator as Faker;
 use Illuminate\Support\Carbon;
 
-$factory->define(Ticket::class, function (Faker $faker) {
+$factory->define(Ticket::class, function () {
     return [
         'concert_id' => function() {
             return factory(Concert::class)->create();
@@ -18,6 +16,6 @@ $factory->define(Ticket::class, function (Faker $faker) {
     ];
 });
 
-$factory->state(Ticket::class, 'reserved', function(Faker $faker) {
+$factory->state(Ticket::class, 'reserved', function() {
     return ['reserved_at' => Carbon::now()];
 });
