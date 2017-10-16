@@ -49,6 +49,7 @@ class Order extends Model
     public function toArray()
     {
         return [
+            'confirmation_number' => $this->confirmation_number,
             'email' => $this->email,
             'ticket_quantity' => $this->ticketsQuantity(),
             'amount' => $this->amount
