@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->string('confirmation_number');
             $table->integer('amount');
             $table->string('email');
-            $table->string('card_last_four_digits');
+            $table->string('card_last_four_digits')->nullable();
             $table->timestamps();
         });
     }

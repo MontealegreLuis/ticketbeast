@@ -25,7 +25,12 @@ class OrderTest extends TestCase
         $this->assertEquals(5, $concert->ticketsRemaining());
         $tickets = $concert->findTickets(3);
 
-        $order = Order::forPurchase($tickets, 'jane@example.com', $tickets->sum('price'));
+        $order = Order::forPurchase(
+            $tickets,
+            'jane@example.com',
+            $tickets->sum('price'),
+            'order-number-123'
+        );
 
         $this->assertEquals('jane@example.com', $order->email);
         $this->assertEquals(3, $order->ticketsQuantity());
