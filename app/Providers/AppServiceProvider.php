@@ -1,9 +1,14 @@
 <?php
-
+/**
+ * PHP version 7.1
+ *
+ * This source file is subject to the license that is bundled with this package in the file LICENSE.
+ */
 namespace App\Providers;
 
 use App\Billing\PaymentGateway;
 use App\Billing\StripePaymentGateway;
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if ($this->app->environment() !== 'production') {
+            $this->app->register(IdeHelperServiceProvider::class);
+        }
         $this->app->bind(StripePaymentGateway::class, function() {
             return new StripePaymentGateway(config("services.stripe.secret"));
         });
