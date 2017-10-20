@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
 use App\Concert;
+use App\ConfirmationNumberGenerator;
 use App\Http\Requests\PurchaseTicketsRequest;
 use App\NotEnoughTickets;
 
@@ -13,9 +14,15 @@ class ConcertOrdersController extends Controller
     /** @var PaymentGateway */
     private $paymentGateway;
 
-    public function __construct(PaymentGateway $paymentGateway)
-    {
+    /** @var ConfirmationNumberGenerator */
+    private $numberGenerator;
+
+    public function __construct(
+        PaymentGateway $paymentGateway,
+        ConfirmationNumberGenerator $numberGenerator
+    ) {
         $this->paymentGateway = $paymentGateway;
+        $this->numberGenerator = $numberGenerator;
     }
 
     public function store($concertId, PurchaseTicketsRequest $request)
@@ -25,7 +32,11 @@ class ConcertOrdersController extends Controller
         try {
             $reservation = $concert->reserveTickets(\request('ticket_quantity'), \request('email'));
 
-            $order = $reservation->complete($this->paymentGateway, \request('payment_token'));
+            $order = $reservation->complete(
+                $this->paymentGateway,
+                \request('payment_token'),
+                $this->numberGenerator
+            );
 
             return response()->json($order, 201);
         } catch (PaymentFailed $exception) {

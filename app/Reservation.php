@@ -45,9 +45,18 @@ class Reservation
         });
     }
 
-    public function complete(PaymentGateway $paymentGateway, string $paymentToken): Order
+    public function complete(
+        PaymentGateway $paymentGateway,
+        string $paymentToken,
+        ConfirmationNumberGenerator $numberGenerator
+    ): Order
     {
         $paymentGateway->charge($this->totalCost(), $paymentToken);
-        return Order::forPurchase($this->tickets(), $this->email(), $this->totalCost());
+        return Order::forPurchase(
+            $this->tickets(),
+            $this->email(),
+            $this->totalCost(),
+            $numberGenerator->generate()
+        );
     }
 }
