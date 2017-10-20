@@ -8,6 +8,7 @@ namespace Tests\Integration;
 
 use App\Concert;
 use App\NotEnoughTickets;
+use App\Order;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -42,7 +43,7 @@ class ConcertTest extends TestCase
         $concert = factory(Concert::class)->create();
         $concert->addTickets(3);
 
-        $order = $concert->orderTickets('jane@example.com', 3);
+        $order = $this->orderTickets($concert, 3);
 
         $this->assertEquals('jane@example.com', $order->email);
         $this->assertEquals(3, $order->ticketsQuantity());
@@ -76,7 +77,8 @@ class ConcertTest extends TestCase
     {
         $concert = factory(Concert::class)->create();
         $concert->addTickets(50);
-        $concert->orderTickets('jane@example.com', 30);
+
+        $this->orderTickets($concert, 30);
 
         $this->assertEquals(20, $concert->ticketsRemaining());
     }
@@ -88,7 +90,7 @@ class ConcertTest extends TestCase
         $concert->addTickets(10);
 
         $this->expectException(NotEnoughTickets::class);
-        $concert->orderTickets('jane@example.com', 30);
+        $this->orderTickets($concert, 30);
 
         $this->assertFalse($concert->hasOrderFor('jane@example.com'));
         $this->assertEquals(10, $concert->ticketsRemaining());
@@ -100,11 +102,26 @@ class ConcertTest extends TestCase
         $concert = factory(Concert::class)->create();
         $concert->addTickets(10);
 
-        $concert->orderTickets('jane@example.com', 8);
+        $this->orderTickets($concert, 8);
         $this->expectException(NotEnoughTickets::class);
-        $concert->orderTickets('john@example.com', 3);
+        $this->orderTickets($concert, 3, 'john@example.com');
 
         $this->assertFalse($concert->hasOrderFor('john@example.com'));
         $this->assertEquals(2, $concert->ticketsRemaining());
+    }
+
+    private function orderTickets(
+        Concert $concert,
+        int $quantity,
+        string $email = 'jane@example.com'
+    ): Order
+    {
+        $tickets = $concert->findTickets($quantity);
+        return Order::forPurchase(
+            $tickets,
+            $email,
+            $tickets->sum('price'),
+            'order-number-123'
+        );
     }
 }

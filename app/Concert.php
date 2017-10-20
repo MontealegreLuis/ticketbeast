@@ -36,11 +36,6 @@ class Concert extends Model
         return $tickets;
     }
 
-    public function createOrder($email, $tickets)
-    {
-        return Order::forPurchase($tickets, $email, $tickets->sum('price'));
-    }
-
     public function addTickets($quantity)
     {
         foreach (range(1, $quantity) as $_) {
@@ -51,13 +46,6 @@ class Concert extends Model
     public function ticketsRemaining()
     {
         return $this->tickets()->available()->count();
-    }
-
-    public function orderTickets($email, $ticketQuantity)
-    {
-        $tickets = $this->findTickets($ticketQuantity);
-
-        return $this->createOrder($email, $tickets);
     }
 
     public function hasOrderFor($email)

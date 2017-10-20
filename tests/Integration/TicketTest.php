@@ -8,6 +8,7 @@ namespace Tests\Unit;
 
 use App\Concert;
 use App\NotEnoughTickets;
+use App\Order;
 use App\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -41,9 +42,16 @@ class TicketTest extends TestCase
     /** @test */
     function it_cannot_be_reserved_if_it_is_already_purchased()
     {
+        /** @var Concert $concert */
         $concert = factory(Concert::class)->create();
         $concert->addTickets(3);
-        $concert->orderTickets('jane@example.com', 2);
+        $tickets = $concert->findTickets(2);
+        Order::forPurchase(
+            $tickets,
+            'jane@example.com',
+            $tickets->sum('price'),
+            'order-number-123'
+        );
 
         $this->expectException(NotEnoughTickets::class);
         $concert->reserveTickets(2, 'john@example.com');

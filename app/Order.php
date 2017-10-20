@@ -13,11 +13,17 @@ class Order extends Model
 {
     protected $guarded = [];
 
-    public static function forPurchase(Collection $tickets, string $email, int $amount): Order
+    public static function forPurchase(
+        Collection $tickets,
+        string $email,
+        int $amount,
+        string $confirmationNumber
+    ): Order
     {
         $order = self::create([
             'email' => $email,
             'amount' => $amount,
+            'confirmation_number' => $confirmationNumber,
         ]);
         foreach ($tickets as $ticket) {
             $order->tickets()->save($ticket);
