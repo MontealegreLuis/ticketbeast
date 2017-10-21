@@ -17,6 +17,4 @@ class StripeGatewayTest extends PaymentGatewayTest
     {
         return new StripePaymentGateway(config("services.stripe.secret"));
     }
-
-    private $lastCharge;
 }

@@ -18,7 +18,7 @@ abstract class PaymentGatewayTest extends TestCase
         $paymentGateway = $this->newPaymentGateway();
 
         $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
-            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken('0000000000004242'));
+            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
         });
 
         $this->assertCount(1, $newCharges);
@@ -32,7 +32,7 @@ abstract class PaymentGatewayTest extends TestCase
 
         $charge = $paymentGateway->charge(
             2500,
-            $paymentGateway->getValidTestToken('0000000000004242')
+            $paymentGateway->getValidTestToken()
         );
 
         $this->assertEquals('4242', $charge->cardLastFour());
@@ -45,21 +45,21 @@ abstract class PaymentGatewayTest extends TestCase
         $paymentGateway = $this->newPaymentGateway();
         $paymentGateway->charge(
             2000,
-            $paymentGateway->getValidTestToken('0000000000004242')
+            $paymentGateway->getValidTestToken()
         );
         $paymentGateway->charge(
             3000,
-            $paymentGateway->getValidTestToken('0000000000004242')
+            $paymentGateway->getValidTestToken()
         );
 
         $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
             $paymentGateway->charge(
                 4000,
-                $paymentGateway->getValidTestToken('0000000000004242')
+                $paymentGateway->getValidTestToken()
             );
             $paymentGateway->charge(
                 5000,
-                $paymentGateway->getValidTestToken('0000000000004242')
+                $paymentGateway->getValidTestToken()
             );
         });
 

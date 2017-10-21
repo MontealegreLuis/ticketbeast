@@ -27,7 +27,7 @@ class FakePaymentGateway implements PaymentGateway
         $this->tokens = collect();
     }
 
-    public function getValidTestToken(string $cardNumber): string
+    public function getValidTestToken(string $cardNumber = '0000000000004242'): string
     {
         $token = 'fake-' . str_random(24);
         $this->tokens[$token] = $cardNumber;

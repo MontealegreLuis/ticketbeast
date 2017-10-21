@@ -20,25 +20,31 @@ class StripePaymentGateway implements PaymentGateway
         $this->apiKey = $apiKey;
     }
 
-    public function charge(int $amount, string $token): void
+    public function charge(int $amount, string $token): \App\Billing\Charge
     {
         try {
-            Charge::create([
+            $stripeCharge = Charge::create([
                 'amount' => $amount,
                 'currency' => 'usd',
                 'source' => $token,
                 'description' => 'Tickets paid - Thank you! -- Ticketbeast',
             ], ['api_key' => $this->apiKey]);
+
+            return new \App\Billing\Charge([
+                'amount' => $stripeCharge['amount'],
+                'card_last_four' => $stripeCharge['source']['last4']
+            ]);
+
         } catch (InvalidRequest $e) {
             throw new PaymentFailed($e);
         }
     }
 
-    public function getValidTestToken(): string
+    public function getValidTestToken(string $cardNumber = '4242424242424242'): string
     {
         return Token::create([
             'card' => [
-                'number' => '4242424242424242',
+                'number' => $cardNumber,
                 'exp_month' => 12,
                 'exp_year' => date('Y') + 1,
                 'cvc' => '123'
@@ -50,7 +56,12 @@ class StripePaymentGateway implements PaymentGateway
     {
         $latestCharge = $this->lastCharge();
         $callback($this);
-        return $this->newChargesSince($latestCharge)->pluck('amount');
+        return $this->newChargesSince($latestCharge)->map(function (Charge $stripeCharge) {
+            return new \App\Billing\Charge([
+                'amount' => $stripeCharge['amount'],
+                'card_last_four' => $stripeCharge['source']['last4']
+            ]);
+        });
     }
 
     private function lastCharge()
