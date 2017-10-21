@@ -6,13 +6,17 @@
  */
 namespace Tests\Feature;
 
+use App\Billing\Charge;
 use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
 
 class FakePaymentGateway implements PaymentGateway
 {
-    /** @var \Illuminate\Support\Collection  */
+    /** @var \Illuminate\Support\Collection */
     private $charges;
+
+    /** @var \Illuminate\Support\Collection */
+    private $tokens;
 
     /** @var callable */
     private $beforeChargeCallback;
@@ -20,29 +24,35 @@ class FakePaymentGateway implements PaymentGateway
     public function __construct()
     {
         $this->charges = collect();
+        $this->tokens = collect();
     }
 
-    public function getValidTestToken(): string
+    public function getValidTestToken(string $cardNumber): string
     {
-        return 'valid-token';
+        $token = 'fake-' . str_random(24);
+        $this->tokens[$token] = $cardNumber;
+        return $token;
     }
 
-    public function charge(int $amountInCents, string $token): void
+    public function charge(int $amountInCents, string $token): Charge
     {
         if (is_callable($this->beforeChargeCallback)) {
             $callback = $this->beforeChargeCallback;
             $this->beforeChargeCallback = null;
             $callback($this);
         }
-        if ($token !== $this->getValidTestToken()) {
+        if (!$this->tokens->has($token)) {
             throw PaymentFailed::withToken($token);
         }
-        $this->charges[] = $amountInCents;
+        return $this->charges[] = new Charge([
+            'amount' => $amountInCents,
+            'card_last_four' => substr($this->tokens[$token], -4),
+        ]);
     }
 
     public function totalCharges(): int
     {
-        return $this->charges->sum();
+        return $this->charges->map->amount()->sum();
     }
 
     public function beforeCharge(callable $callback): void

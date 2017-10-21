@@ -18,27 +18,53 @@ abstract class PaymentGatewayTest extends TestCase
         $paymentGateway = $this->newPaymentGateway();
 
         $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
-            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
+            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken('0000000000004242'));
         });
 
         $this->assertCount(1, $newCharges);
-        $this->assertEquals(2500, $newCharges->sum());
+        $this->assertEquals(2500, $newCharges->map->amount()->sum());
+    }
+    
+    /** @test */
+    function it_get_details_about_a_successful_charge()
+    {
+        $paymentGateway = $this->newPaymentGateway();
+
+        $charge = $paymentGateway->charge(
+            2500,
+            $paymentGateway->getValidTestToken('0000000000004242')
+        );
+
+        $this->assertEquals('4242', $charge->cardLastFour());
+        $this->assertEquals(2500, $charge->amount());
     }
 
     /** @test */
-    function can_fetch_charges_created_during_a_callback()
+    function it_fetches_charges_created_during_a_callback()
     {
         $paymentGateway = $this->newPaymentGateway();
-        $paymentGateway->charge(2000, $paymentGateway->getValidTestToken());
-        $paymentGateway->charge(3000, $paymentGateway->getValidTestToken());
+        $paymentGateway->charge(
+            2000,
+            $paymentGateway->getValidTestToken('0000000000004242')
+        );
+        $paymentGateway->charge(
+            3000,
+            $paymentGateway->getValidTestToken('0000000000004242')
+        );
 
         $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
-            $paymentGateway->charge(4000, $paymentGateway->getValidTestToken());
-            $paymentGateway->charge(5000, $paymentGateway->getValidTestToken());
+            $paymentGateway->charge(
+                4000,
+                $paymentGateway->getValidTestToken('0000000000004242')
+            );
+            $paymentGateway->charge(
+                5000,
+                $paymentGateway->getValidTestToken('0000000000004242')
+            );
         });
 
         $this->assertCount(2, $newCharges);
-        $this->assertEquals([5000, 4000], $newCharges->all());
+        $this->assertEquals([5000, 4000], $newCharges->map->amount()->all());
     }
 
     /** @test */
