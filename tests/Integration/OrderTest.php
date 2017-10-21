@@ -6,7 +6,7 @@
  */
 namespace Tests\Integration;
 
-use App\Concert;
+use App\Billing\Charge;
 use App\Order;
 use App\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -20,22 +20,20 @@ class OrderTest extends TestCase
     /** @test */
     function it_is_created_from_purchase()
     {
-        $concert = factory(Concert::class)->create(['ticket_price' => 1200]);
-        $concert->addTickets(5);
-        $this->assertEquals(5, $concert->ticketsRemaining());
-        $tickets = $concert->findTickets(3);
+        $tickets = factory(Ticket::class, 3)->create();
+        $charge = new Charge(['amount' => 3600, 'card_last_four' => '1234']);
 
         $order = Order::forPurchase(
             $tickets,
             'jane@example.com',
-            $tickets->sum('price'),
+            $charge,
             'order-number-123'
         );
 
         $this->assertEquals('jane@example.com', $order->email);
         $this->assertEquals(3, $order->ticketsQuantity());
         $this->assertEquals(3600, $order->amount);
-        $this->assertEquals(2, $concert->ticketsRemaining());
+        $this->assertEquals('1234', $order->card_last_four_digits);
     }
 
     /** @test */
@@ -77,5 +75,4 @@ class OrderTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
         Order::withConfirmationNumber('unknown_confirmation_number');
     }
-
 }

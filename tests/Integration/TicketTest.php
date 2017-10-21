@@ -6,6 +6,7 @@
  */
 namespace Tests\Unit;
 
+use App\Billing\Charge;
 use App\Concert;
 use App\NotEnoughTickets;
 use App\Order;
@@ -46,10 +47,11 @@ class TicketTest extends TestCase
         $concert = factory(Concert::class)->create();
         $concert->addTickets(3);
         $tickets = $concert->findTickets(2);
+        $charge = new Charge(['amount' => 6000, 'card_last_four' => '1234']);
         Order::forPurchase(
             $tickets,
             'jane@example.com',
-            $tickets->sum('price'),
+            $charge,
             'order-number-123'
         );
 

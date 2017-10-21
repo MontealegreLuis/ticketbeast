@@ -8,7 +8,7 @@ namespace Tests\Integration;
 
 use App\Concert;
 use App\NotEnoughTickets;
-use App\Order;
+use App\Ticket;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -38,18 +38,6 @@ class ConcertTest extends TestCase
     }
 
     /** @test */
-    function it_orders_tickets()
-    {
-        $concert = factory(Concert::class)->create();
-        $concert->addTickets(3);
-
-        $order = $this->orderTickets($concert, 3);
-
-        $this->assertEquals('jane@example.com', $order->email);
-        $this->assertEquals(3, $order->ticketsQuantity());
-    }
-
-    /** @test */
     function it_adds_available_tickets()
     {
         $concert = factory(Concert::class)->create();
@@ -76,52 +64,23 @@ class ConcertTest extends TestCase
     function its_remaining_tickets_are_not_related_to_any_order()
     {
         $concert = factory(Concert::class)->create();
-        $concert->addTickets(50);
-
-        $this->orderTickets($concert, 30);
+        $concert->tickets()->saveMany(factory(Ticket::class, 30)->create(['order_id' => 1]));
+        $concert->tickets()->saveMany(factory(Ticket::class, 20)->create(['order_id' => null]));
 
         $this->assertEquals(20, $concert->ticketsRemaining());
     }
     
     /** @test */
-    function it_fails_to_order_more_tickets_than_remaining()
+    function it_fails_to_reserve_more_tickets_than_remaining()
     {
+        /** @var Concert $concert */
         $concert = factory(Concert::class)->create();
-        $concert->addTickets(10);
+        $concert->tickets()->saveMany(factory(Ticket::class, 10)->create(['order_id' => null]));
 
         $this->expectException(NotEnoughTickets::class);
-        $this->orderTickets($concert, 30);
+        $concert->reserveTickets(30, 'jane@example.com');
 
         $this->assertFalse($concert->hasOrderFor('jane@example.com'));
         $this->assertEquals(10, $concert->ticketsRemaining());
-    }
-
-    /** @test */
-    function it_cannot_order_tickets_that_are_already_ordered()
-    {
-        $concert = factory(Concert::class)->create();
-        $concert->addTickets(10);
-
-        $this->orderTickets($concert, 8);
-        $this->expectException(NotEnoughTickets::class);
-        $this->orderTickets($concert, 3, 'john@example.com');
-
-        $this->assertFalse($concert->hasOrderFor('john@example.com'));
-        $this->assertEquals(2, $concert->ticketsRemaining());
-    }
-
-    private function orderTickets(
-        Concert $concert,
-        int $quantity,
-        string $email = 'jane@example.com'
-    ): Order
-    {
-        $tickets = $concert->findTickets($quantity);
-        return Order::forPurchase(
-            $tickets,
-            $email,
-            $tickets->sum('price'),
-            'order-number-123'
-        );
     }
 }

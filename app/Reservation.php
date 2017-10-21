@@ -51,11 +51,11 @@ class Reservation
         ConfirmationNumberGenerator $numberGenerator
     ): Order
     {
-        $paymentGateway->charge($this->totalCost(), $paymentToken);
+        $charge = $paymentGateway->charge($this->totalCost(), $paymentToken);
         return Order::forPurchase(
             $this->tickets(),
             $this->email(),
-            $this->totalCost(),
+            $charge,
             $numberGenerator->generate()
         );
     }

@@ -6,6 +6,7 @@
  */
 namespace App;
 
+use App\Billing\Charge;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -16,13 +17,14 @@ class Order extends Model
     public static function forPurchase(
         Collection $tickets,
         string $email,
-        int $amount,
+        Charge $charge,
         string $confirmationNumber
     ): Order
     {
         $order = self::create([
             'email' => $email,
-            'amount' => $amount,
+            'amount' => $charge->amount(),
+            'card_last_four_digits' => $charge->cardLastFour(),
             'confirmation_number' => $confirmationNumber,
         ]);
         foreach ($tickets as $ticket) {
