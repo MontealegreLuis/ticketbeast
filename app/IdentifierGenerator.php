@@ -6,7 +6,7 @@
  */
 namespace App;
 
-interface ConfirmationNumberGenerator
+interface IdentifierGenerator
 {
-    public function generate(): string;
+    public function generateConfirmationNumber(): string;
 }

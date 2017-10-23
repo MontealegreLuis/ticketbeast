@@ -8,8 +8,8 @@ namespace App\Providers;
 
 use App\Billing\PaymentGateway;
 use App\Billing\StripePaymentGateway;
-use App\ConfirmationNumberGenerator;
-use App\RandomConfirmationNumberGenerator;
+use App\IdentifierGenerator;
+use App\RandomIdentifierGenerator;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -41,8 +41,8 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->bind(PaymentGateway::class, StripePaymentGateway::class);
         $this->app->bind(
-            ConfirmationNumberGenerator::class,
-            RandomConfirmationNumberGenerator::class
+            IdentifierGenerator::class,
+            RandomIdentifierGenerator::class
         );
     }
 }

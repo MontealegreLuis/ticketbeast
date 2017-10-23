@@ -1,12 +1,16 @@
 <?php
-
+/**
+ * PHP version 7.1
+ *
+ * This source file is subject to the license that is bundled with this package in the file LICENSE.
+ */
 namespace App\Http\Controllers;
 
 use App\Billing\PaymentFailed;
 use App\Billing\PaymentGateway;
 use App\Concert;
-use App\ConfirmationNumberGenerator;
 use App\Http\Requests\PurchaseTicketsRequest;
+use App\IdentifierGenerator;
 use App\NotEnoughTickets;
 
 class ConcertOrdersController extends Controller
@@ -14,15 +18,15 @@ class ConcertOrdersController extends Controller
     /** @var PaymentGateway */
     private $paymentGateway;
 
-    /** @var ConfirmationNumberGenerator */
-    private $numberGenerator;
+    /** @var IdentifierGenerator */
+    private $generator;
 
     public function __construct(
         PaymentGateway $paymentGateway,
-        ConfirmationNumberGenerator $numberGenerator
+        IdentifierGenerator $generator
     ) {
         $this->paymentGateway = $paymentGateway;
-        $this->numberGenerator = $numberGenerator;
+        $this->generator = $generator;
     }
 
     public function store($concertId, PurchaseTicketsRequest $request)
@@ -35,7 +39,7 @@ class ConcertOrdersController extends Controller
             $order = $reservation->complete(
                 $this->paymentGateway,
                 \request('payment_token'),
-                $this->numberGenerator
+                $this->generator
             );
 
             return response()->json($order, 201);

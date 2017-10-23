@@ -48,7 +48,7 @@ class Reservation
     public function complete(
         PaymentGateway $paymentGateway,
         string $paymentToken,
-        ConfirmationNumberGenerator $numberGenerator
+        IdentifierGenerator $numberGenerator
     ): Order
     {
         $charge = $paymentGateway->charge($this->totalCost(), $paymentToken);
@@ -56,7 +56,7 @@ class Reservation
             $this->tickets(),
             $this->email(),
             $charge,
-            $numberGenerator->generate()
+            $numberGenerator->generateConfirmationNumber()
         );
     }
 }

@@ -6,9 +6,9 @@
  */
 namespace App;
 
-class RandomConfirmationNumberGenerator implements ConfirmationNumberGenerator
+class RandomIdentifierGenerator implements IdentifierGenerator
 {
-    public function generate(): string
+    public function generateConfirmationNumber(): string
     {
         $pool = '23456789ABCDEFGHJKLMNPQRSTUVXYZ';
 

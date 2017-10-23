@@ -7,7 +7,7 @@
 namespace Tests\Integration;
 
 use App\Concert;
-use App\ConfirmationNumberGenerator;
+use App\IdentifierGenerator;
 use App\Reservation;
 use App\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,8 +26,8 @@ class ReservationTest extends TestCase
         $tickets = factory(Ticket::class, 3)->create(['concert_id' => $concert->id]);
         $reservation = new Reservation($tickets, 'john@example.com');
         $paymentGateway = new FakePaymentGateway();
-        $confirmationNumberGenerator = Mockery::mock(ConfirmationNumberGenerator::class, [
-            'generate' => 'ORDERCONFIRMATION1234',
+        $confirmationNumberGenerator = Mockery::mock(IdentifierGenerator::class, [
+            'generateConfirmationNumber' => 'ORDERCONFIRMATION1234',
         ]);
 
         $order = $reservation->complete(

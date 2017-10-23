@@ -6,7 +6,7 @@
  */
 namespace Tests\Unit;
 
-use App\RandomConfirmationNumberGenerator;
+use App\RandomIdentifierGenerator;
 use Tests\TestCase;
 
 class RandomConfirmationNumberGeneratorTest extends TestCase
@@ -14,9 +14,9 @@ class RandomConfirmationNumberGeneratorTest extends TestCase
     /** @test */
     function it_creates_a_confirmation_number_24_characters_long()
     {
-        $generator = new RandomConfirmationNumberGenerator();
+        $generator = new RandomIdentifierGenerator();
 
-        $confirmationNumber = $generator->generate();
+        $confirmationNumber = $generator->generateConfirmationNumber();
 
         $this->assertEquals(24, strlen($confirmationNumber));
     }
@@ -24,9 +24,9 @@ class RandomConfirmationNumberGeneratorTest extends TestCase
     /** @test */
     function it_creates_a_confirmation_number_with_uppercase_letters_and_digits()
     {
-        $generator = new RandomConfirmationNumberGenerator();
+        $generator = new RandomIdentifierGenerator();
 
-        $confirmationNumber = $generator->generate();
+        $confirmationNumber = $generator->generateConfirmationNumber();
 
         $this->assertRegExp('/^[A-Z0-9]+$/', $confirmationNumber);
     }
@@ -34,9 +34,9 @@ class RandomConfirmationNumberGeneratorTest extends TestCase
     /** @test */
     function it_creates_a_confirmation_number_without_ambigous_characters()
     {
-        $generator = new RandomConfirmationNumberGenerator();
+        $generator = new RandomIdentifierGenerator();
 
-        $confirmationNumber = $generator->generate();
+        $confirmationNumber = $generator->generateConfirmationNumber();
 
         $this->assertFalse(strpos($confirmationNumber, '1'));
         $this->assertFalse(strpos($confirmationNumber, 'I'));
@@ -47,10 +47,10 @@ class RandomConfirmationNumberGeneratorTest extends TestCase
     /** @test */
     function it_creates_a_unique_confirmation_number()
     {
-        $generator = new RandomConfirmationNumberGenerator();
+        $generator = new RandomIdentifierGenerator();
 
         $confirmationNumbers = collect(range(1, 100))->map(function () use ($generator) {
-            return $generator->generate();
+            return $generator->generateConfirmationNumber();
         });
 
         $this->assertCount(100, array_unique($confirmationNumbers->toArray()));
