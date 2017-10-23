@@ -23,8 +23,9 @@ class Ticket extends Model
         $this->update(['reserved_at' => Carbon::now()]);
     }
 
-    public function claimFor(Order $order): void
+    public function claimFor(Order $order, IdentifierGenerator $generator): void
     {
+        $this->code = $generator->generateCodeFor($this);
         $order->tickets()->save($this);
     }
 

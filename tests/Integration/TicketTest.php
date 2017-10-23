@@ -8,10 +8,13 @@ namespace Tests\Unit;
 
 use App\Billing\Charge;
 use App\Concert;
+use App\IdentifierGenerator;
 use App\NotEnoughTickets;
 use App\Order;
+use App\RandomIdentifierGenerator;
 use App\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class TicketTest extends TestCase
@@ -46,10 +49,17 @@ class TicketTest extends TestCase
         $order = factory(Order::class)->create();
         /** @var Ticket $ticket */
         $ticket = factory(Ticket::class)->create(['code' => null]);
+        $generator = Mockery::mock(IdentifierGenerator::class);
+        $generator
+            ->shouldReceive('generateCodeFor')
+            ->with($ticket)
+            ->andReturn('TICKETCODE1')
+        ;
 
-        $ticket->claimFor($order);
+        $ticket->claimFor($order, $generator);
 
         $this->assertEquals($order->id, $ticket->order_id);
+        $this->assertEquals('TICKETCODE1', $ticket->code);
     }
 
 
@@ -65,7 +75,7 @@ class TicketTest extends TestCase
             $tickets,
             'jane@example.com',
             $charge,
-            'order-number-123'
+            new RandomIdentifierGenerator('test-salt')
         );
 
         $this->expectException(NotEnoughTickets::class);

@@ -8,6 +8,7 @@ namespace Tests\Integration;
 
 use App\Billing\Charge;
 use App\Order;
+use App\RandomIdentifierGenerator;
 use App\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,18 +28,19 @@ class OrderTest extends TestCase
             Mockery::spy(Ticket::class),
             Mockery::spy(Ticket::class),
         ]);
+        $generator = new RandomIdentifierGenerator('test-salt');
 
         $order = Order::forPurchase(
             $tickets,
             'jane@example.com',
             $charge,
-            'order-number-123'
+            $generator
         );
 
         $this->assertEquals('jane@example.com', $order->email);
         $this->assertEquals(3600, $order->amount);
         $this->assertEquals('1234', $order->card_last_four_digits);
-        $tickets->each->shouldHaveReceived('claimFor', [$order]);
+        $tickets->each->shouldHaveReceived('claimFor', [$order, $generator]);
     }
 
     /** @test */

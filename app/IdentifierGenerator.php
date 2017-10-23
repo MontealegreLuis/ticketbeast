@@ -9,4 +9,6 @@ namespace App;
 interface IdentifierGenerator
 {
     public function generateConfirmationNumber(): string;
+
+    public function generateCodeFor(Ticket $ticket): string;
 }

@@ -21,10 +21,18 @@ class PurchaseTicketsTest extends TestCase
     /** @test */
     function customer_can_purchase_tickets_to_a_published_concert()
     {
-        $confirmationNumberGenerator = Mockery::mock(IdentifierGenerator::class, [
-            'generateConfirmationNumber' => 'ORDERCONFIRMATION1234',
-        ]);
-        $this->app->instance(IdentifierGenerator::class, $confirmationNumberGenerator);
+        $this->withoutExceptionHandling();
+
+        $generator = Mockery::mock(IdentifierGenerator::class);
+        $generator
+            ->shouldReceive('generateConfirmationNumber')
+            ->andReturn('ORDERCONFIRMATION1234')
+        ;
+        $generator
+            ->shouldReceive('generateCodeFor')
+            ->andReturn('ticket-code-1', 'ticket-code-2', 'ticket-code-3')
+        ;
+        $this->app->instance(IdentifierGenerator::class, $generator);
         $concert = factory(Concert::class)->states('published')->create([
             'ticket_price' => 3250
         ]);

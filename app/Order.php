@@ -18,17 +18,17 @@ class Order extends Model
         Collection $tickets,
         string $email,
         Charge $charge,
-        string $confirmationNumber
+        IdentifierGenerator $generator
     ): Order
     {
         $order = self::create([
             'email' => $email,
             'amount' => $charge->amount(),
             'card_last_four_digits' => $charge->cardLastFour(),
-            'confirmation_number' => $confirmationNumber,
+            'confirmation_number' => $generator->generateConfirmationNumber(),
         ]);
 
-        $tickets->each->claimFor($order);
+        $tickets->each->claimFor($order, $generator);
 
         return $order;
     }

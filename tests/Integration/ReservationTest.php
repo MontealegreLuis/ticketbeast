@@ -26,14 +26,20 @@ class ReservationTest extends TestCase
         $tickets = factory(Ticket::class, 3)->create(['concert_id' => $concert->id]);
         $reservation = new Reservation($tickets, 'john@example.com');
         $paymentGateway = new FakePaymentGateway();
-        $confirmationNumberGenerator = Mockery::mock(IdentifierGenerator::class, [
-            'generateConfirmationNumber' => 'ORDERCONFIRMATION1234',
-        ]);
+        $generator = Mockery::mock(IdentifierGenerator::class);
+        $generator
+            ->shouldReceive('generateConfirmationNumber')
+            ->andReturn('ORDERCONFIRMATION1234')
+        ;
+        $generator
+            ->shouldReceive('generateCodeFor')
+            ->andReturn('test-code-1', 'test-code-2', 'test-code-3')
+        ;
 
         $order = $reservation->complete(
             $paymentGateway,
             $paymentGateway->getValidTestToken(),
-            $confirmationNumberGenerator
+            $generator
         );
 
         $this->assertEquals('john@example.com', $order->email);

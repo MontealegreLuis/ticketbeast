@@ -39,10 +39,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StripePaymentGateway::class, function() {
             return new StripePaymentGateway(config("services.stripe.secret"));
         });
+        $this->app->bind(RandomIdentifierGenerator::class, function() {
+            return new RandomIdentifierGenerator(config('app.ticket_code_salt'));
+        });
         $this->app->bind(PaymentGateway::class, StripePaymentGateway::class);
-        $this->app->bind(
-            IdentifierGenerator::class,
-            RandomIdentifierGenerator::class
-        );
+        $this->app->bind(IdentifierGenerator::class, RandomIdentifierGenerator::class);
     }
 }
