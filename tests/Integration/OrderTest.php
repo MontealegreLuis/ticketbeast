@@ -11,6 +11,7 @@ use App\Order;
 use App\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -20,8 +21,12 @@ class OrderTest extends TestCase
     /** @test */
     function it_is_created_from_purchase()
     {
-        $tickets = factory(Ticket::class, 3)->create();
         $charge = new Charge(['amount' => 3600, 'card_last_four' => '1234']);
+        $tickets = collect([
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class),
+        ]);
 
         $order = Order::forPurchase(
             $tickets,
@@ -31,9 +36,9 @@ class OrderTest extends TestCase
         );
 
         $this->assertEquals('jane@example.com', $order->email);
-        $this->assertEquals(3, $order->ticketsQuantity());
         $this->assertEquals(3600, $order->amount);
         $this->assertEquals('1234', $order->card_last_four_digits);
+        $tickets->each->shouldHaveReceived('claimFor', [$order]);
     }
 
     /** @test */
@@ -45,15 +50,21 @@ class OrderTest extends TestCase
             'amount' => 6000,
             'card_last_four_digits' => '1234',
         ]);
-        $order->tickets()->saveMany(factory(Ticket::class)->times(5)->create([
-            'code' => '123',
-        ]));
+        $order->tickets()->saveMany([
+            factory(Ticket::class)->create(['code' => 'ticket-code-1']),
+            factory(Ticket::class)->create(['code' => 'ticket-code-2']),
+            factory(Ticket::class)->create(['code' => 'ticket-code-3']),
+        ]);
 
         $this->assertEquals([
             'email' => 'jane@example.com',
-            'ticket_quantity' => 5,
             'amount' => 6000,
             'confirmation_number' => 'confirmation_number_123',
+            'tickets' => [
+                ['code' => 'ticket-code-1'],
+                ['code' => 'ticket-code-2'],
+                ['code' => 'ticket-code-3'],
+            ],
         ], $order->toArray());
     }
 

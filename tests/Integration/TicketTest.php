@@ -41,6 +41,19 @@ class TicketTest extends TestCase
     }
 
     /** @test */
+    function it_can_be_claimed_for_an_order()
+    {
+        $order = factory(Order::class)->create();
+        /** @var Ticket $ticket */
+        $ticket = factory(Ticket::class)->create(['code' => null]);
+
+        $ticket->claimFor($order);
+
+        $this->assertEquals($order->id, $ticket->order_id);
+    }
+
+
+    /** @test */
     function it_cannot_be_reserved_if_it_is_already_purchased()
     {
         /** @var Concert $concert */

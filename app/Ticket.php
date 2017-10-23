@@ -23,6 +23,11 @@ class Ticket extends Model
         $this->update(['reserved_at' => Carbon::now()]);
     }
 
+    public function claimFor(Order $order): void
+    {
+        $order->tickets()->save($this);
+    }
+
     public function scopeAvailable($query)
     {
         return $query->whereNull('order_id')->whereNull('reserved_at');
