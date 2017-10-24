@@ -42,7 +42,7 @@
                 payment_token: token.id
             }).done(function (response) {
                 console.log(response);
-                console.log('order created!!!');
+                window.location = '/orders/' + response.confirmation_number;
             }).fail(function (response) {
                 console.log(response.responseText);
             });
