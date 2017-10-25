@@ -63,8 +63,7 @@
                                     <div class="text-muted">
                                         <p>{{ $ticket->concert->venue_address }}</p>
                                         <p>
-                                            {{ $ticket->concert->city }}
-                                            , {{ $ticket->concert->state }} {{ $ticket->concert->zip }}
+                                            {{ $ticket->concert->city }}, {{ $ticket->concert->state }} {{ $ticket->concert->zip }}
                                         </p>
                                     </div>
                                 </div>
