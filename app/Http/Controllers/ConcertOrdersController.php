@@ -11,7 +11,9 @@ use App\Billing\PaymentGateway;
 use App\Concert;
 use App\Http\Requests\PurchaseTicketsRequest;
 use App\IdentifierGenerator;
+use App\Mail\OrderConfirmationEmail;
 use App\NotEnoughTickets;
+use Mail;
 
 class ConcertOrdersController extends Controller
 {
@@ -34,13 +36,15 @@ class ConcertOrdersController extends Controller
         /** @var \App\Concert $concert */
         $concert = Concert::published()->findOrFail($concertId);
         try {
-            $reservation = $concert->reserveTickets(\request('ticket_quantity'), \request('email'));
+            $reservation = $concert->reserveTickets(request('ticket_quantity'), request('email'));
 
             $order = $reservation->complete(
                 $this->paymentGateway,
-                \request('payment_token'),
+                request('payment_token'),
                 $this->generator
             );
+
+            Mail::to($order->email)->send(new OrderConfirmationEmail($order));
 
             return response()->json($order, 201);
         } catch (PaymentFailed $exception) {

@@ -9,8 +9,10 @@ namespace Tests\Feature;
 use App\Billing\PaymentGateway;
 use App\Concert;
 use App\IdentifierGenerator;
+use App\Mail\OrderConfirmationEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse;
+use Illuminate\Support\Facades\Mail;
 use Mockery;
 use Tests\TestCase;
 
@@ -53,7 +55,12 @@ class PurchaseTicketsTest extends TestCase
         ]);
         $this->assertEquals(9750, $this->paymentGateway->totalCharges());
         $this->assertTrue($concert->hasOrderFor('john@example.com'));
-        $this->assertEquals(3, $concert->orderFor('john@example.com')->first()->ticketsQuantity());
+        $order = $concert->orderFor('john@example.com')->first();
+        $this->assertEquals(3, $order->ticketsQuantity());
+        Mail::assertSent(OrderConfirmationEmail::class, function (OrderConfirmationEmail $mail) use ($order) {
+            return $mail->hasTo('john@example.com')
+                && $mail->order->id == $order->id;
+        });
     }
 
     /** @test */
@@ -141,6 +148,7 @@ class PurchaseTicketsTest extends TestCase
         parent::setUp();
         $this->paymentGateway = new FakePaymentGateway();
         $this->app->instance(PaymentGateway::class, $this->paymentGateway);
+        Mail::fake();
     }
 
     private function orderTicketsFor(Concert $concert, array $purchase = []): TestResponse
