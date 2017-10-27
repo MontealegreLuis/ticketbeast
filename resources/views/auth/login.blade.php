@@ -12,6 +12,15 @@
             <label for="password">Password</label>
             <input type="password" name="password" id="password" class="form-control">
         </div>
-        <button class="btn btn-primary">Login</button>
+        <button class="btn btn-primary">Log in</button>
+        @if($errors->any())
+            <div
+                class="alert alert-danger"
+                role="alert"
+                style="margin-top: 1em"
+            >
+                These credentials do not match our records.
+            </div>
+        @endif
     </form>
 @endsection
