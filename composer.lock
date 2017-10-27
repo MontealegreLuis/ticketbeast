@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b003e18283afcd609c8f4636117adafe",
+    "content-hash": "888078eb10f9aee9cbf0ed96ecb371ec",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -315,69 +315,6 @@
                 "trusted proxy"
             ],
             "time": "2017-06-15T17:19:42+00:00"
-        },
-        {
-            "name": "hashids/hashids",
-            "version": "2.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ivanakimov/hashids.php.git",
-                "reference": "28889ed83cdc91f4a55637daff0fb5c799eb324e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ivanakimov/hashids.php/zipball/28889ed83cdc91f4a55637daff0fb5c799eb324e",
-                "reference": "28889ed83cdc91f4a55637daff0fb5c799eb324e",
-                "shasum": ""
-            },
-            "require": {
-                "ext-bcmath": "*",
-                "php": "^5.6.4 || ^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.6"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.1-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Hashids\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ivan Akimov",
-                    "email": "ivan@barreleye.com",
-                    "homepage": "https://twitter.com/IvanAkimov"
-                },
-                {
-                    "name": "Vincent Klaiber",
-                    "email": "hello@vinkla.com",
-                    "homepage": "https://vinkla.com"
-                }
-            ],
-            "description": "Generate short, unique, non-sequential ids (like YouTube and Bitly) from numbers",
-            "homepage": "http://hashids.org/php",
-            "keywords": [
-                "bitly",
-                "decode",
-                "encode",
-                "hash",
-                "hashid",
-                "hashids",
-                "ids",
-                "obfuscate",
-                "youtube"
-            ],
-            "time": "2017-01-01T13:33:33+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -2450,6 +2387,58 @@
             "time": "2017-07-22T11:58:36+00:00"
         },
         {
+            "name": "facebook/webdriver",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/facebook/php-webdriver.git",
+                "reference": "eadb0b7a7c3e6578185197fd40158b08c3164c83"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/eadb0b7a7c3e6578185197fd40158b08c3164c83",
+                "reference": "eadb0b7a7c3e6578185197fd40158b08c3164c83",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-zip": "*",
+                "php": "^5.5 || ~7.0",
+                "symfony/process": "^2.8 || ^3.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "php-mock/php-mock-phpunit": "^1.1",
+                "phpunit/phpunit": "4.6.* || ~5.0",
+                "satooshi/php-coveralls": "^1.0",
+                "squizlabs/php_codesniffer": "^2.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-community": "1.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Facebook\\WebDriver\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "A PHP client for Selenium WebDriver",
+            "homepage": "https://github.com/facebook/php-webdriver",
+            "keywords": [
+                "facebook",
+                "php",
+                "selenium",
+                "webdriver"
+            ],
+            "time": "2017-04-28T14:54:49+00:00"
+        },
+        {
             "name": "filp/whoops",
             "version": "2.1.10",
             "source": {
@@ -2607,6 +2596,130 @@
                 "test"
             ],
             "time": "2016-01-20T08:20:44+00:00"
+        },
+        {
+            "name": "hashids/hashids",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ivanakimov/hashids.php.git",
+                "reference": "28889ed83cdc91f4a55637daff0fb5c799eb324e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ivanakimov/hashids.php/zipball/28889ed83cdc91f4a55637daff0fb5c799eb324e",
+                "reference": "28889ed83cdc91f4a55637daff0fb5c799eb324e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "php": "^5.6.4 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hashids\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Akimov",
+                    "email": "ivan@barreleye.com",
+                    "homepage": "https://twitter.com/IvanAkimov"
+                },
+                {
+                    "name": "Vincent Klaiber",
+                    "email": "hello@vinkla.com",
+                    "homepage": "https://vinkla.com"
+                }
+            ],
+            "description": "Generate short, unique, non-sequential ids (like YouTube and Bitly) from numbers",
+            "homepage": "http://hashids.org/php",
+            "keywords": [
+                "bitly",
+                "decode",
+                "encode",
+                "hash",
+                "hashid",
+                "hashids",
+                "ids",
+                "obfuscate",
+                "youtube"
+            ],
+            "time": "2017-01-01T13:33:33+00:00"
+        },
+        {
+            "name": "laravel/dusk",
+            "version": "v2.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/dusk.git",
+                "reference": "29127c21d72ab5bff53ed3b8eb914c0059c77763"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/dusk/zipball/29127c21d72ab5bff53ed3b8eb914c0059c77763",
+                "reference": "29127c21d72ab5bff53ed3b8eb914c0059c77763",
+                "shasum": ""
+            },
+            "require": {
+                "facebook/webdriver": "~1.0",
+                "illuminate/console": "~5.5",
+                "illuminate/support": "~5.5",
+                "nesbot/carbon": "~1.20",
+                "php": ">=5.6.4",
+                "symfony/console": "~3.2",
+                "symfony/process": "~3.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.6",
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Dusk\\DuskServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Dusk\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Laravel Dusk provides simple end-to-end testing and browser automation.",
+            "keywords": [
+                "laravel",
+                "testing",
+                "webdriver"
+            ],
+            "time": "2017-10-09T16:10:59+00:00"
         },
         {
             "name": "mockery/mockery",

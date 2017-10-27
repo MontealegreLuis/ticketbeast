@@ -12,6 +12,7 @@ use App\IdentifierGenerator;
 use App\RandomIdentifierGenerator;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Dusk\DuskServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->environment() !== 'production') {
             $this->app->register(IdeHelperServiceProvider::class);
+            $this->app->register(DuskServiceProvider::class);
         }
 
         $this->app->bind(StripePaymentGateway::class, function() {
