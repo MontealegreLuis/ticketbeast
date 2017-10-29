@@ -67,4 +67,13 @@ class PromoterLoginTest extends TestCase
         $response->assertSessionHasErrors('email');
         $this->assertFalse(Auth::check());
     }
+
+    /** @test */
+    function logging_out_the_current_user()
+    {
+        Auth::login(factory(User::class)->create());
+        $response = $this->post('/logout');
+        $response->assertRedirect('/');
+        $this->assertFalse(Auth::check());
+    }
 }
