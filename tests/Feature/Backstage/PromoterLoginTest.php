@@ -42,13 +42,14 @@ class PromoterLoginTest extends TestCase
             'email' => 'jane@example.com',
             'password' => bcrypt('super-secret-password'),
         ]);
+        session()->setPreviousUrl(url('/login'));
 
         $response = $this->post('/login', [
             'email' => 'jane@example.com',
             'password' => 'wrong-password',
         ]);
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
         $response->assertSessionHasErrors('email');
         $this->assertTrue(session()->hasOldInput('email'));
         $this->assertFalse(session()->hasOldInput('password'));
@@ -58,12 +59,14 @@ class PromoterLoginTest extends TestCase
     /** @test */
     function logging_in_without_an_account()
     {
+        session()->setPreviousUrl(url('/login'));
+
         $response = $this->post('/login', [
             'email' => 'nobody@example.com',
             'password' => 'wrong-password',
         ]);
 
-        $response->assertRedirect('/');
+        $response->assertRedirect('/login');
         $response->assertSessionHasErrors('email');
         $this->assertFalse(Auth::check());
     }
@@ -72,7 +75,9 @@ class PromoterLoginTest extends TestCase
     function logging_out_the_current_user()
     {
         Auth::login(factory(User::class)->create());
+
         $response = $this->post('/logout');
+
         $response->assertRedirect('/');
         $this->assertFalse(Auth::check());
     }
