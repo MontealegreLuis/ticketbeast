@@ -6,6 +6,7 @@
  */
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -91,5 +92,15 @@ class Concert extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->published_at !== null;
+    }
+
+    public function publish()
+    {
+        $this->update(['published_at' => Carbon::now()]);
     }
 }

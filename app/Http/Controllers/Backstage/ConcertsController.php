@@ -23,6 +23,7 @@ class ConcertsController extends Controller
     {
         $promoter = Auth::user();
 
+        /** @var Concert $concert */
         $concert = $promoter->concerts()->create([
             'title' => request('title'),
             'subtitle' => request('subtitle'),
@@ -36,6 +37,7 @@ class ConcertsController extends Controller
             'additional_information' => request('additional_information'),
         ]);
         $concert->addTickets(request('ticket_quantity'));
+        $concert->publish();
 
         return redirect()->route('concerts.show', $concert);
     }

@@ -38,6 +38,17 @@ class ConcertTest extends TestCase
     }
 
     /** @test */
+    function it_can_be_published()
+    {
+        /** @var Concert $concert */
+        $concert = factory(Concert::class)->create(['published_at' => null]);
+
+        $concert->publish();
+
+        $this->assertTrue($concert->isPublished());
+    }
+
+    /** @test */
     function it_adds_available_tickets()
     {
         $concert = factory(Concert::class)->create();
