@@ -8,10 +8,13 @@ namespace Tests\Unit;
 
 use App\Concert;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ConcertTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     function it_formats_its_date()
     {

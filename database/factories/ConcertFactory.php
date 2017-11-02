@@ -6,11 +6,14 @@
  */
 
 use App\Concert;
+use App\User;
 use Carbon\Carbon;
 
 $factory->define(Concert::class, function () {
-
     return [
+        'user_id' => function () {
+            return factory(User::class)->create()->id;
+        },
         'title' => 'Example Band',
         'subtitle' => 'with The Fake Openers',
         'date' => Carbon::parse('+2 weeks'),

@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Backstage;
 use App\Concert;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddConcertRequest;
+use Auth;
 use Carbon\Carbon;
 
 class ConcertsController extends Controller
@@ -20,7 +21,9 @@ class ConcertsController extends Controller
 
     public function store(AddConcertRequest $request)
     {
-        $concert = Concert::create([
+        $promoter = Auth::user();
+
+        $concert = $promoter->concerts()->create([
             'title' => request('title'),
             'subtitle' => request('subtitle'),
             'date' => Carbon::parse(sprintf('%s %s', request('date'),  request('time'))),
