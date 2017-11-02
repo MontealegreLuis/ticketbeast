@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Backstage;
 
 use App\Concert;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddConcertRequest;
 use Carbon\Carbon;
 
 class ConcertsController extends Controller
@@ -17,7 +18,7 @@ class ConcertsController extends Controller
         return view('backstage/concerts/create');
     }
 
-    public function store()
+    public function store(AddConcertRequest $request)
     {
         $concert = Concert::create([
             'title' => request('title'),
