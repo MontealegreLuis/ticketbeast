@@ -5,7 +5,26 @@
         <div class="col-xs-12"><h1>Add a concert</h1></div>
     </div>
     <hr>
-    <form action="/backstage/concerts/new" method="post">
+    <form action="/backstage/concerts" method="post">
+        {{ csrf_field() }}
+        <div class="row">
+
+            @if ($errors->any())
+                <div class="col-xs-12">
+                    <div class="alert alert-danger">
+                        <h2 class="text-base text-danger wt-bold m-xs-b-2">
+                            There {{ $errors->count() == 1 ? 'is' : 'are' }} {{ $errors->count() }} {{ str_plural('error', $errors->count() )}} with this concert:
+                        </h2>
+                        <ul class="text-danger">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
+        </div>
+
         <div class="row">
             <div class="col-sm-6">
                 <h3>Concert details</h3>
@@ -24,6 +43,7 @@
                         name="title"
                         placeholder="The Headliners"
                         class="form-control"
+                        value="{{ old('title') }}"
                     >
                 </div>
                 <div class="form-group">
@@ -34,6 +54,7 @@
                         name="subtitle"
                         placeholder="With the openers (Optional)"
                         class="form-control"
+                        value="{{ old('subtitle') }}"
                     >
                 </div>
                 <div class="form-group">
@@ -43,7 +64,9 @@
                         id="additional_information"
                         class="form-control"
                         cols="30"
-                        rows="10"></textarea>
+                        rows="10"
+                        value="{{ old('additional_information') }}"
+                    ></textarea>
                 </div>
             </div>
         </div>
@@ -66,6 +89,7 @@
                             name="date"
                             placeholder="yyyy-mm-dd"
                             class="form-control"
+                            value="{{ old('date') }}"
                         >
                     </div>
                 </div>
@@ -78,6 +102,7 @@
                             name="time"
                             placeholder="7:00pm"
                             class="form-control"
+                            value="{{ old('time') }}"
                         >
                     </div>
                 </div>
@@ -101,6 +126,7 @@
                         name="venue"
                         placeholder="The Mosh Pit"
                         class="form-control"
+                        value="{{ old('venue') }}"
                     >
                 </div>
                 <div class="form-group">
@@ -111,6 +137,7 @@
                         name="venue_address"
                         placeholder="500 Example Ave."
                         class="form-control"
+                        value="{{ old('venue_adress') }}"
                     >
                 </div>
                 <div class="row">
@@ -123,6 +150,7 @@
                                 name="city"
                                 placeholder="Laraville"
                                 class="form-control"
+                                value="{{ old('city') }}"
                             >
                         </div>
                     </div>
@@ -135,6 +163,7 @@
                                 name="state"
                                 placeholder="ON"
                                 class="form-control"
+                                value="{{ old('state') }}"
                             >
                         </div>
                     </div>
@@ -146,6 +175,7 @@
                             name="zip"
                             placeholder="90210"
                             class="form-control"
+                            value="{{ old('zip') }}"
                         >
                     </div>
                 </div>
@@ -170,6 +200,7 @@
                             name="ticket_price"
                             placeholder="$0.00"
                             class="form-control"
+                            value="{{ old('ticket_price') }}"
                         >
                     </div>
                     <div class="col-sm-6">
@@ -180,6 +211,7 @@
                             name="tickets_count"
                             placeholder="250"
                             class="form-control"
+                            value="{{ old('tickets_count') }}"
                         >
                     </div>
                 </div>
