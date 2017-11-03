@@ -26,19 +26,28 @@ class ViewPromotersConcertsTest extends TestCase
     }
 
     /** @test */
-    function promoters_can_view_their_concerts()
+    function promoters_can_only_view_their_own_concerts()
     {
         $this->withoutExceptionHandling();
 
-        $user = factory(User::class)->create();
-        $concerts = factory(Concert::class, 3)->create(['user_id' =>  $user->id]);
+        $promoter = factory(User::class)->create();
+        $anotherPromoter = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->get('/backstage/concerts');
+        $concertA = factory(Concert::class)->create(['user_id' =>  $promoter->id]);
+        $anotherPromoterConcert = factory(Concert::class)->create([
+            'user_id' =>  $anotherPromoter->id
+        ]);
+        $concertB = factory(Concert::class)->create(['user_id' =>  $promoter->id]);
+        $concertC = factory(Concert::class)->create(['user_id' =>  $promoter->id]);
+
+
+        $response = $this->actingAs($promoter)->get('/backstage/concerts');
 
         $response->assertStatus(200);
         $concertsInView = $response->original->getData()['concerts'];
-        $this->assertTrue($concertsInView->contains($concerts[0]));
-        $this->assertTrue($concertsInView->contains($concerts[1]));
-        $this->assertTrue($concertsInView->contains($concerts[2]));
+        $this->assertTrue($concertsInView->contains($concertA));
+        $this->assertTrue($concertsInView->contains($concertB));
+        $this->assertTrue($concertsInView->contains($concertC));
+        $this->assertFalse($concertsInView->contains($anotherPromoterConcert));
     }
 }

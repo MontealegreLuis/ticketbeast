@@ -16,7 +16,8 @@ class ConcertsController extends Controller
 {
     public function index()
     {
-        return view('backstage.concerts.index', ['concerts' => Concert::all()]);
+        $promoter = Auth::user();
+        return view('backstage.concerts.index', ['concerts' => $promoter->concerts]);
     }
 
     public function create()
