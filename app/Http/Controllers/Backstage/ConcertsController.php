@@ -47,4 +47,18 @@ class ConcertsController extends Controller
 
         return redirect()->route('concerts.show', $concert);
     }
+
+    public function edit($id)
+    {
+        $promoter = Auth::user();
+
+        /** @var Concert $concert */
+        $concert = $promoter->concerts()->findOrFail($id);
+
+        abort_if($concert->isPublished(), 403);
+
+        return view('backstage.concerts.edit', [
+            'concert' => $concert
+        ]);
+    }
 }
