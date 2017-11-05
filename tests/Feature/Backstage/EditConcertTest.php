@@ -187,4 +187,52 @@ class EditConcertTest extends TestCase
         $this->assertEquals('00000', $updatedConcert->zip);
         $this->assertEquals(2000, $updatedConcert->ticket_price);
     }
+
+    /** @test */
+    function promoters_cannot_edit_published_concerts()
+    {
+        $promoter = factory(User::class)->create();
+        $concert = factory(Concert::class)->states('published')->create([
+            'user_id' => $promoter->id,
+            'title' => 'Old title',
+            'subtitle' => 'Old subtitle',
+            'additional_information' => 'Old additional information',
+            'date' => Carbon::parse('2017-01-01 5:00pm'),
+            'venue' => 'Old venue',
+            'venue_address' => 'Old address',
+            'city' => 'Old city',
+            'state' => 'Old state',
+            'zip' => '00000',
+            'ticket_price' => 2000,
+        ]);
+
+        $response = $this->actingAs($promoter)->patch("/backstage/concerts/$concert->id", [
+            'user_id' => $promoter->id,
+            'title' => 'New title',
+            'subtitle' => 'New subtitle',
+            'additional_information' => 'New additional information',
+            'date' => '2018-12-12',
+            'time' => '8:00pm',
+            'venue' => 'New venue',
+            'venue_address' => 'New address',
+            'city' => 'New city',
+            'state' => 'New state',
+            'zip' => '99999',
+            'ticket_price' => '25.50',
+        ]);
+
+        $updatedConcert = $concert->refresh();
+
+        $response->assertStatus(403);
+        $this->assertEquals('Old title', $updatedConcert->title);
+        $this->assertEquals('Old subtitle', $updatedConcert->subtitle);
+        $this->assertEquals('Old additional information', $updatedConcert->additional_information);
+        $this->assertEquals(Carbon::parse('2017-01-01 5:00pm'), $updatedConcert->date);
+        $this->assertEquals('Old venue', $updatedConcert->venue);
+        $this->assertEquals('Old address', $updatedConcert->venue_address);
+        $this->assertEquals('Old city', $updatedConcert->city);
+        $this->assertEquals('Old state', $updatedConcert->state);
+        $this->assertEquals('00000', $updatedConcert->zip);
+        $this->assertEquals(2000, $updatedConcert->ticket_price);
+    }
 }

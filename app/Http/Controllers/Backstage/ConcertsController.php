@@ -69,6 +69,8 @@ class ConcertsController extends Controller
         /** @var Concert $concert */
         $concert = $promoter->concerts()->findOrFail($id);
 
+        abort_if($concert->isPublished(), 403);
+
         $concert->update([
             'title' => request('title'),
             'subtitle' => request('subtitle'),
