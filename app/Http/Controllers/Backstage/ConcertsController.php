@@ -8,7 +8,7 @@ namespace App\Http\Controllers\Backstage;
 
 use App\Concert;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AddConcertRequest;
+use App\Http\Requests\ConcertRequest;
 use Auth;
 use Carbon\Carbon;
 
@@ -25,7 +25,7 @@ class ConcertsController extends Controller
         return view('backstage/concerts/create');
     }
 
-    public function store(AddConcertRequest $request)
+    public function store(ConcertRequest $request)
     {
         $promoter = Auth::user();
 
@@ -62,7 +62,7 @@ class ConcertsController extends Controller
         ]);
     }
 
-    public function update($id)
+    public function update($id, ConcertRequest $request)
     {
         $promoter = Auth::user();
 

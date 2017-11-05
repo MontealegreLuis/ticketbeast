@@ -210,6 +210,7 @@
                             name="tickets_count"
                             placeholder="250"
                             class="form-control"
+                            readonly
                             value="{{ old('tickets_count', $concert->tickets()->count()) }}"
                         >
                     </div>

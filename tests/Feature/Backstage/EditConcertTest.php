@@ -121,6 +121,7 @@ class EditConcertTest extends TestCase
             'state' => 'New state',
             'zip' => '99999',
             'ticket_price' => '25.50',
+            'ticket_quantity' => 10,
         ]);
 
         $updatedConcert = $concert->refresh();
@@ -171,6 +172,7 @@ class EditConcertTest extends TestCase
             'state' => 'New state',
             'zip' => '99999',
             'ticket_price' => '25.50',
+            'ticket_quantity' => 10,
         ]);
 
         $updatedConcert = $concert->refresh();
@@ -219,6 +221,7 @@ class EditConcertTest extends TestCase
             'state' => 'New state',
             'zip' => '99999',
             'ticket_price' => '25.50',
+            'ticket_quantity' => 10,
         ]);
 
         $updatedConcert = $concert->refresh();
@@ -283,5 +286,37 @@ class EditConcertTest extends TestCase
         $this->assertEquals('Old state', $updatedConcert->state);
         $this->assertEquals('00000', $updatedConcert->zip);
         $this->assertEquals(2000, $updatedConcert->ticket_price);
+    }
+
+    /** @test */
+    function concerts_updated_information_is_validated()
+    {
+        $promoter = factory(User::class)->create();
+        $concert = factory(Concert::class)->create([
+            'user_id' => $promoter->id,
+        ]);
+        session()->setPreviousUrl(url("/backstage/concerts/{$concert->id}/edit"));
+
+        $response = $this->actingAs($promoter)->patch("/backstage/concerts/$concert->id", [
+            'user_id' => $promoter->id,
+            'title' => '',
+            'subtitle' => 'New subtitle',
+            'additional_information' => 'New additional information',
+            'date' => '2018-12-12',
+            'time' => '8:00pm',
+            'venue' => 'New venue',
+            'venue_address' => 'New address',
+            'city' => 'New city',
+            'state' => 'New state',
+            'zip' => '99999',
+            'ticket_price' => '25.50',
+            'ticket_quantity' => 10,
+        ]);
+
+        $concert->refresh();
+
+        $response->assertStatus(302);
+        $response->assertRedirect("/backstage/concerts/{$concert->id}/edit");
+        $response->assertSessionHasErrors('title');
     }
 }

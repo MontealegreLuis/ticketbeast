@@ -213,7 +213,7 @@ class AddConcertRequestTest extends TestCase
 
     private function validatorFor($input)
     {
-        return Validator::make($input, (new AddConcertRequest())->rules());
+        return Validator::make($input, (new ConcertRequest())->rules());
     }
 
     private function assertErrorFor($validator, $field)

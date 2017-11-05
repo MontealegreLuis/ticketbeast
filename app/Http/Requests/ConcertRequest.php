@@ -8,7 +8,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddConcertRequest extends FormRequest
+class ConcertRequest extends FormRequest
 {
     /** @return bool */
     public function authorize()
