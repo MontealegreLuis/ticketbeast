@@ -99,8 +99,9 @@ class Concert extends Model
         return $this->published_at !== null;
     }
 
-    public function publish()
+    public function publish(): void
     {
         $this->update(['published_at' => Carbon::now()]);
+        $this->addTickets($this->ticket_quantity);
     }
 }

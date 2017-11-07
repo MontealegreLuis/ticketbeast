@@ -18,17 +18,17 @@ class AddConcertTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function promoters_can_add_concerts()
+    function promoters_can_view_the_form_to_add_concerts()
     {
-        $user = factory(User::class)->create();
+        $promoter = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->get('/backstage/concerts/new');
+        $response = $this->actingAs($promoter)->get('/backstage/concerts/new');
 
         $response->assertStatus(200);
     }
 
     /** @test */
-    function guests_cannot_add_concerts()
+    function guests_cannot_view_the_form_to_add_concerts()
     {
         $response = $this->get('/backstage/concerts/new');
 
@@ -41,9 +41,9 @@ class AddConcertTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = factory(User::class)->create();
+        $promoter = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->post('/backstage/concerts', [
+        $response = $this->actingAs($promoter)->post('/backstage/concerts', [
             'title' => 'No Warning',
             'subtitle' => 'with Cruel Hand and Backtrack',
             'additional_information' => 'You must be 19 years of age to attend this concert',
@@ -65,7 +65,7 @@ class AddConcertTest extends TestCase
         $response->assertRedirect("/concerts/$concert->id");
 
         $this->assertTrue($concert->isPublished());
-        $this->assertTrue($concert->user->is($user));
+        $this->assertTrue($concert->user->is($promoter));
         $this->assertEquals('No Warning', $concert->title);
         $this->assertEquals('with Cruel Hand and Backtrack', $concert->subtitle);
         $this->assertEquals(
@@ -79,6 +79,7 @@ class AddConcertTest extends TestCase
         $this->assertEquals('ON', $concert->state);
         $this->assertEquals('12345', $concert->zip);
         $this->assertEquals(3250, $concert->ticket_price);
+        $this->assertEquals(75, $concert->ticket_quantity);
         $this->assertEquals(75, $concert->ticketsRemaining());
     }
 

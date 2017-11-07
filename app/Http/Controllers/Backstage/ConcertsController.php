@@ -41,8 +41,8 @@ class ConcertsController extends Controller
             'state' => request('state'),
             'zip' => request('zip'),
             'additional_information' => request('additional_information'),
+            'ticket_quantity' => request('ticket_quantity'),
         ]);
-        $concert->addTickets(request('ticket_quantity'));
         $concert->publish();
 
         return redirect()->route('concerts.show', $concert);
@@ -75,13 +75,14 @@ class ConcertsController extends Controller
             'title' => request('title'),
             'subtitle' => request('subtitle'),
             'date' => Carbon::parse(sprintf('%s %s', request('date'),  request('time'))),
-            'ticket_price' => request('ticket_price') * 100,
             'venue' => request('venue'),
             'venue_address' => request('venue_address'),
             'city' => request('city'),
             'state' => request('state'),
             'zip' => request('zip'),
             'additional_information' => request('additional_information'),
+            'ticket_price' => request('ticket_price') * 100,
+            'ticket_quantity' => request('ticket_quantity'),
         ]);
 
         return redirect()->route('backstage.concerts.index');
