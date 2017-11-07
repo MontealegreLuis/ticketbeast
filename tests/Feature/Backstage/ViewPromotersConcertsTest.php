@@ -40,12 +40,12 @@ class ViewPromotersConcertsTest extends TestCase
         $concertB = ConcertFactory::createPublished(['user_id' =>  $promoter->id]);
         $concertC = ConcertFactory::createPublished(['user_id' =>  $promoter->id]);
 
-        $unpublishedConcertA = factory(Concert::class)->states('unpublished')->create(['user_id' =>  $promoter->id]);
-        $unpublishedConcertB = factory(Concert::class)->states('unpublished')->create(['user_id' =>  $promoter->id]);
-        $anotherPromoterUnpublishedConcert = factory(Concert::class)->states('unpublished')->create([
+        $unpublishedConcertA = ConcertFactory::createUnpublished(['user_id' =>  $promoter->id]);
+        $unpublishedConcertB = ConcertFactory::createUnpublished(['user_id' =>  $promoter->id]);
+        $anotherPromoterUnpublishedConcert = ConcertFactory::createUnpublished([
             'user_id' =>  $anotherPromoter->id
         ]);
-        $unpublishedConcertC = factory(Concert::class)->states('unpublished')->create(['user_id' =>  $promoter->id]);
+        $unpublishedConcertC = ConcertFactory::createUnpublished(['user_id' =>  $promoter->id]);
 
 
         $response = $this->actingAs($promoter)->get('/backstage/concerts');
