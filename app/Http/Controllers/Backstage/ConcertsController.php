@@ -17,7 +17,10 @@ class ConcertsController extends Controller
     public function index()
     {
         $promoter = Auth::user();
-        return view('backstage.concerts.index', ['concerts' => $promoter->concerts]);
+        return view('backstage.concerts.index', [
+            'publishedConcerts' => $promoter->concerts->filter->isPublished(),
+            'unpublishedConcerts' => $promoter->concerts->reject->isPublished(),
+        ]);
     }
 
     public function create()

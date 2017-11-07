@@ -20,7 +20,7 @@
         <div class="col-xs-12">
             <h2>Published</h2>
             <div class="row">
-                @foreach ($concerts->filter->isPublished() as $concert)
+                @foreach ($publishedConcerts as $concert)
                     <div class="col-xs-12 col-md-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -51,7 +51,7 @@
             </div>
             <h2>Drafts</h2>
             <div class="row">
-                @foreach ($concerts->reject->isPublished() as $concert)
+                @foreach ($unpublishedConcerts as $concert)
                     <div class="col-xs-12 col-md-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
