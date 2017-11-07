@@ -65,8 +65,7 @@
                         class="form-control"
                         cols="30"
                         rows="10"
-                        value="{{ old('additional_information') }}"
-                    ></textarea>
+                    >{{ old('additional_information') }}</textarea>
                 </div>
             </div>
         </div>
@@ -84,7 +83,7 @@
                     <div class="form-group">
                         <label for="date">Date</label>
                         <input
-                            type="text"
+                            type="date"
                             id="date"
                             name="date"
                             placeholder="yyyy-mm-dd"
@@ -137,7 +136,7 @@
                         name="venue_address"
                         placeholder="500 Example Ave."
                         class="form-control"
-                        value="{{ old('venue_adress') }}"
+                        value="{{ old('venue_address') }}"
                     >
                 </div>
                 <div class="row">
@@ -204,14 +203,14 @@
                         >
                     </div>
                     <div class="col-sm-6">
-                        <label for="tickets_count">Tickets Available</label>
+                        <label for="ticket_quantity">Tickets Available</label>
                         <input
                             type="text"
-                            id="tickets_count"
-                            name="tickets_count"
+                            id="ticket_quantity"
+                            name="ticket_quantity"
                             placeholder="250"
                             class="form-control"
-                            value="{{ old('tickets_count') }}"
+                            value="{{ old('ticket_quantity') }}"
                         >
                     </div>
                 </div>
