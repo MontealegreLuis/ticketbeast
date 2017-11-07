@@ -10,6 +10,7 @@ use App\Concert;
 use App\NotEnoughTickets;
 use App\Ticket;
 use Carbon\Carbon;
+use ConcertFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -53,20 +54,9 @@ class ConcertTest extends TestCase
     }
 
     /** @test */
-    function it_adds_available_tickets()
-    {
-        $concert = factory(Concert::class)->create();
-
-        $concert->addTickets(50);
-
-        $this->assertEquals(50, $concert->ticketsRemaining());
-    }
-
-    /** @test */
     function it_reserves_tickets()
     {
-        $concert = factory(Concert::class)->create();
-        $concert->addTickets(3);
+        $concert = ConcertFactory::createPublished(['ticket_quantity' => 3]);
 
         $reservation = $concert->reserveTickets(2, 'john@example.com');
 

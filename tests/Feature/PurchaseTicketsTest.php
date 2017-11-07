@@ -10,6 +10,7 @@ use App\Billing\PaymentGateway;
 use App\Concert;
 use App\IdentifierGenerator;
 use App\Mail\OrderConfirmationEmail;
+use ConcertFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Support\Facades\Mail;
@@ -35,10 +36,10 @@ class PurchaseTicketsTest extends TestCase
             ->andReturn('ticket-code-1', 'ticket-code-2', 'ticket-code-3')
         ;
         $this->app->instance(IdentifierGenerator::class, $generator);
-        $concert = factory(Concert::class)->states('published')->create([
-            'ticket_price' => 3250
+        $concert = ConcertFactory::createPublished([
+            'ticket_price' => 3250,
+            'ticket_quantity' => 3,
         ]);
-        $concert->addTickets(3);
 
         $response = $this->orderTicketsFor($concert);
 
@@ -78,8 +79,7 @@ class PurchaseTicketsTest extends TestCase
     /** @test */
     function order_is_not_created_if_payment_fails()
     {
-        $concert = factory(Concert::class)->states('published')->create();
-        $concert->addTickets(3);
+        $concert = ConcertFactory::createPublished(['ticket_quantity' => 3]);
 
         $response = $this->orderTicketsFor($concert, ['payment_token' => 'invalid-token']);
 
@@ -91,8 +91,7 @@ class PurchaseTicketsTest extends TestCase
     /** @test */
     function cannot_purchase_more_tickets_than_remain()
     {
-        $concert = factory(Concert::class)->states('published')->create();
-        $concert->addTickets(50);
+        $concert = ConcertFactory::createPublished(['ticket_quantity' => 50]);
 
         $response = $this->orderTicketsFor($concert, ['ticket_quantity' => 51]);
 
@@ -106,10 +105,10 @@ class PurchaseTicketsTest extends TestCase
     function cannot_purchase_tickets_another_customer_is_already_trying_to_purchase()
     {
         $this->withoutExceptionHandling();
-        $concert = factory(Concert::class)->states('published')->create([
-            'ticket_price' => 1200
+        $concert = ConcertFactory::createPublished([
+            'ticket_price' => 1200,
+            'ticket_quantity' => 3,
         ]);
-        $concert->addTickets(3);
 
         $this->paymentGateway->beforeCharge(function ($paymentGateway) use ($concert) {
             $response = $this->orderTicketsFor($concert, [
