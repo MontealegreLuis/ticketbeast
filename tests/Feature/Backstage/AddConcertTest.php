@@ -62,9 +62,9 @@ class AddConcertTest extends TestCase
         $concert = Concert::first();
 
         $response->assertStatus(302);
-        $response->assertRedirect("/concerts/$concert->id");
+        $response->assertRedirect('/backstage/concerts');
 
-        $this->assertTrue($concert->isPublished());
+        $this->assertFalse($concert->isPublished());
         $this->assertTrue($concert->user->is($promoter));
         $this->assertEquals('No Warning', $concert->title);
         $this->assertEquals('with Cruel Hand and Backtrack', $concert->subtitle);
@@ -80,7 +80,7 @@ class AddConcertTest extends TestCase
         $this->assertEquals('12345', $concert->zip);
         $this->assertEquals(3250, $concert->ticket_price);
         $this->assertEquals(75, $concert->ticket_quantity);
-        $this->assertEquals(75, $concert->ticketsRemaining());
+        $this->assertEquals(0, $concert->ticketsRemaining());
     }
 
     /** @test */

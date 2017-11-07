@@ -29,8 +29,7 @@ class ConcertsController extends Controller
     {
         $promoter = Auth::user();
 
-        /** @var Concert $concert */
-        $concert = $promoter->concerts()->create([
+        $promoter->concerts()->create([
             'title' => request('title'),
             'subtitle' => request('subtitle'),
             'date' => Carbon::parse(sprintf('%s %s', request('date'),  request('time'))),
@@ -43,9 +42,8 @@ class ConcertsController extends Controller
             'additional_information' => request('additional_information'),
             'ticket_quantity' => request('ticket_quantity'),
         ]);
-        $concert->publish();
 
-        return redirect()->route('concerts.show', $concert);
+        return redirect()->route('backstage.concerts.index');
     }
 
     public function edit($id)
