@@ -1,10 +1,17 @@
 @extends('layouts.master')
 
+@section('styles')
+    <link rel="stylesheet" href="/css/backstage.css">
+@endsection
+
 @section('content')
     <div class="row">
         <div class="col-xs-12">
-            <h1>Your concerts</h1>
-            <a href="{{ route('backstage.concerts.new') }}" class="btn btn-primary">
+            <h1 class="pull-left">Your concerts</h1>
+            <a
+                href="{{ route('backstage.concerts.new') }}"
+                class="btn btn-primary btn-lg pull-right add-concert-btn"
+            >
                 Add concert
             </a>
         </div>
