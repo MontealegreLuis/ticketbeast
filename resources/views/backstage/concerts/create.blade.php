@@ -2,18 +2,20 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xs-12"><h1>Add a concert</h1></div>
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <h1>Add a concert</h1>
+            <hr>
+        </div>
     </div>
-    <hr>
     <form action="/backstage/concerts" method="post">
         {{ csrf_field() }}
         <div class="row">
-
             @if ($errors->any())
-                <div class="col-xs-12">
+                <div class="col-xs-12 col-md-10 col-md-offset-1">
                     <div class="alert alert-danger">
-                        <h2 class="text-base text-danger wt-bold m-xs-b-2">
-                            There {{ $errors->count() == 1 ? 'is' : 'are' }} {{ $errors->count() }} {{ str_plural('error', $errors->count() )}} with this concert:
+                        <h2>
+                            There {{ $errors->count() == 1 ? 'is' : 'are' }} {{ $errors->count() }} {{ str_plural('error', $errors->count() )}}
+                            with this concert:
                         </h2>
                         <ul class="text-danger">
                             @foreach ($errors->all() as $error)
@@ -26,7 +28,7 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-md-5 col-md-offset-1">
                 <h3>Concert details</h3>
                 <p class="text-muted">Tell us who's playing! <em>Please be Slayer!</em></p>
                 <p class="text-muted">
@@ -34,7 +36,7 @@
                     opening bands, and any important information to the description.
                 </p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-sm-5">
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input
@@ -68,55 +70,57 @@
                     >{{ old('additional_information') }}</textarea>
                 </div>
             </div>
+            <hr class="col-xs-12 col-md-10 col-md-offset-1">
         </div>
-        <hr>
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-md-5 col-md-offset-1">
                 <h3>Date & Time</h3>
                 <p class="text-muted">
                     True metalheads really only care about the obscure openers, so make sure they
                     don't get late there!
                 </p>
             </div>
-            <div class="col-sm-6">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="date">Date</label>
-                        <input
-                            type="date"
-                            id="date"
-                            name="date"
-                            placeholder="yyyy-mm-dd"
-                            class="form-control"
-                            value="{{ old('date') }}"
-                        >
+            <div class="col-xs-12 col-sm-5">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input
+                                type="date"
+                                id="date"
+                                name="date"
+                                placeholder="yyyy-mm-dd"
+                                class="form-control"
+                                value="{{ old('date') }}"
+                            >
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="time">Start Time</label>
-                        <input
-                            type="text"
-                            id="time"
-                            name="time"
-                            placeholder="7:00pm"
-                            class="form-control"
-                            value="{{ old('time') }}"
-                        >
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="time">Start Time</label>
+                            <input
+                                type="text"
+                                id="time"
+                                name="time"
+                                placeholder="7:00pm"
+                                class="form-control"
+                                value="{{ old('time') }}"
+                            >
+                        </div>
                     </div>
                 </div>
             </div>
+            <hr class="col-xs-12 col-md-10 col-md-offset-1">
         </div>
-        <hr>
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-md-5 col-md-offset-1">
                 <h3>Venue information</h3>
                 <p class="text-muted">
                     Where is the show? Let attendees know the venue name and address so they can
                     bring the mosh
                 </p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-sm-5">
                 <div class="form-group">
                     <label for="venue">Venue Name</label>
                     <input
@@ -179,17 +183,17 @@
                     </div>
                 </div>
             </div>
+            <hr class="col-xs-12 col-md-10 col-md-offset-1">
         </div>
-        <hr>
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-md-5 col-md-offset-1">
                 <h3>Tickets & Pricing</h3>
                 <p class="text-muted">
                     Set your ticket price and availability, but don't forget, metalheads are cheap
                     so keep it reasonable.
                 </p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-xs-12 col-sm-5">
                 <div class="row">
                     <div class="col-sm-6">
                         <label for="ticket_price">Price</label>
@@ -215,10 +219,11 @@
                     </div>
                 </div>
             </div>
+            <hr class="col-xs-12 col-md-10 col-md-offset-1">
         </div>
         <div class="row">
-            <div class="col-xs-12">
-                <button class="btn btn-primary pull-right">Add Concert</button>
+            <div class="col-xs-12 col-md-10 col-md-offset-1">
+                <button class="btn btn-primary btn-block">Add Concert</button>
             </div>
         </div>
     </form>

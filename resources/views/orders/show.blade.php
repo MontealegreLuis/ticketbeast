@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        <div class="col-xs-7">
+                        <div class="col-xs-12 col-sm-7">
                             <div class="media">
                                 <div class="media-left">
                                     <span class="glyphicon glyphicon-calendar"></span>
@@ -53,7 +53,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-5">
+                        <div class="col-xs-12 col-sm-5">
                             <div class="media">
                                 <div class="media-left">
                                     <span class="glyphicon glyphicon-map-marker"></span>

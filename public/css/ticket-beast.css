@@ -1,0 +1,13 @@
+.btn-logout {
+    margin-top: .6em;
+}
+
+footer {
+    margin-top: 1em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    text-align: center;
+    background-color: #5e5e5e;
+    color: #ddd;
+    font-size: 1em;
+}
