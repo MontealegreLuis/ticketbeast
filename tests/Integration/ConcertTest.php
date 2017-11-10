@@ -88,4 +88,16 @@ class ConcertTest extends TestCase
         $this->assertFalse($concert->hasOrderFor('jane@example.com'));
         $this->assertEquals(10, $concert->ticketsRemaining());
     }
+    
+    /** @test */
+    function it_calculates_how_many_tickets_have_been_sold()
+    {
+        /** @var Concert $concert */
+        $concert = factory(Concert::class)->create();
+        $concert->tickets()->saveMany(factory(Ticket::class, 3)->create(['order_id' => 1]));
+        $concert->tickets()->saveMany(factory(Ticket::class, 2)->create(['order_id' => null]));
+
+        $this->assertEquals(3, $concert->ticketsSold());
+    }
+    
 }

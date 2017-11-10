@@ -37,19 +37,24 @@ class Concert extends Model
         return $tickets;
     }
 
-    public function addTickets($quantity)
+    public function addTickets($quantity): void
     {
         foreach (range(1, $quantity) as $_) {
             $this->tickets()->create();
         }
     }
 
-    public function ticketsRemaining()
+    public function ticketsRemaining(): int
     {
         return $this->tickets()->available()->count();
     }
 
-    public function hasOrderFor($email)
+    public function ticketsSold(): int
+    {
+        return $this->tickets()->sold()->count();
+    }
+
+    public function hasOrderFor($email): bool
     {
         return $this->orders()->where('email', $email)->count() > 0;
     }
