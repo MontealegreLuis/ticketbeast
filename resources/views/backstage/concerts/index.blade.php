@@ -40,10 +40,15 @@
                                 </p>
                             </div>
                             <a
+                                href="{{ route('backstage.published-concert.index', $concert) }}"
+                                class="btn btn-primary btn-block">
+                                Manage
+                            </a>
+                            <a
                                 href="{{ route('concerts.show', $concert) }}"
                                 class="btn btn-block btn-default"
                             >
-                                Get Ticket Link
+                                Public Link
                             </a>
                         </div>
                     </div>

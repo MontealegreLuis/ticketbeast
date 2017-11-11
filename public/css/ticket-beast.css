@@ -1,5 +1,15 @@
-.btn-logout {
+.btn-logout,
+.orders-label {
     margin-top: .6em;
+}
+
+.text-jumbo {
+    font-size: 4em;
+    font-weight: bold;
+}
+
+.progress {
+    width: 100%;
 }
 
 footer {
