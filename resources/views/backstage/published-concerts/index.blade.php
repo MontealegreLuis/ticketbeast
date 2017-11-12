@@ -57,7 +57,7 @@
                             <div class="panel-body">
                                 <h3>Total Revenue</h3>
                                 <p class="text-jumbo">
-                                    $10,353
+                                    ${{ $concert->revenueInDollars() }}
                                 </p>
                             </div>
                         </div>
