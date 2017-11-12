@@ -6,6 +6,7 @@
  */
  namespace App\Http\Controllers\Backstage;
 
+use App\Concert;
 use Auth;
 
 class PublishedConcertOrdersController
@@ -13,7 +14,11 @@ class PublishedConcertOrdersController
     public function index($id)
     {
         $promoter = Auth::user();
+        /** @var Concert $concert */
         $concert = $promoter->concerts()->published()->findOrFail($id);
-        return view('backstage.published-concerts.index', ['concert' => $concert]);
+        return view('backstage.published-concerts.index', [
+            'concert' => $concert,
+            'orders' => $concert->orders()->latest()->take(10)->get(),
+        ]);
     }
 }

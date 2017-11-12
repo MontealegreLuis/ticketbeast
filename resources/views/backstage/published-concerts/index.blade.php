@@ -66,4 +66,41 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <h2>Recent orders</h2>
+        </div>
+        <div class="col-xs-12">
+            @if ($orders->isEmpty())
+                <p class="lead text-center">No orders yet.</p>
+            @else
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Tickets</th>
+                        <th>Amount</th>
+                        <th>Card</th>
+                        <th>Purchased</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        @foreach($orders as $order)
+                            <td>{{ $order->email }}</td>
+                            <td>{{ $order->ticketsQuantity() }}</td>
+                            <td>${{ round($order->amount / 100, 2) }}</td>
+                            <td class="text-muted">
+                                ****{{ $order->card_last_four_digits }}
+                            </td>
+                            <td class="text-muted">
+                                {{ $order->created_at->format('M j, Y @ g:ia') }}
+                            </td>
+                        @endforeach
+                    </tr>
+                    </tbody>
+                </table>
+            @endif
+        </div>
+    </div>
 @endsection

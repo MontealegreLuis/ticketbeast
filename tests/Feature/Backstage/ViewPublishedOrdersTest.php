@@ -8,8 +8,10 @@
 namespace Tests\Feature\Backstage;
 
 use App\User;
+use Carbon\Carbon;
 use ConcertFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use OrderFactory;
 use Tests\TestCase;
 
 class ViewPublishedOrdersTest extends TestCase
@@ -24,6 +26,18 @@ class ViewPublishedOrdersTest extends TestCase
         $promoter = factory(User::class)->create();
         $concert = ConcertFactory::createPublished(['user_id' => $promoter->id]);
 
+        $oldOrder = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('11 days ago')]);
+        $recentOrder1 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('10 days ago')]);
+        $recentOrder2 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('9 days ago')]);
+        $recentOrder3 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('8 days ago')]);
+        $recentOrder4 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('7 days ago')]);
+        $recentOrder5 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('6 days ago')]);
+        $recentOrder6 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('5 days ago')]);
+        $recentOrder7 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('4 days ago')]);
+        $recentOrder8 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('3 days ago')]);
+        $recentOrder9 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('2 days ago')]);
+        $recentOrder10 = OrderFactory::createForConcert($concert, ['created_at' => Carbon::parse('1 days ago')]);
+
         $response = $this
             ->actingAs($promoter)
             ->get("/backstage/published-concerts/{$concert->id}/orders")
@@ -31,7 +45,26 @@ class ViewPublishedOrdersTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertEquals('backstage.published-concerts.index', $response->original->getName());
-        $this->assertTrue($response->original->getData()['concert']->is($concert));
+
+        $orders = $response->original->getData()['orders'];
+
+        $this->assertFalse($orders->contains($oldOrder));
+        $inOrderOrders = [
+            $recentOrder10,
+            $recentOrder9,
+            $recentOrder8,
+            $recentOrder7,
+            $recentOrder6,
+            $recentOrder5,
+            $recentOrder4,
+            $recentOrder3,
+            $recentOrder2,
+            $recentOrder1,
+        ];
+        $orders->zip($inOrderOrders)->each(function ($pair) {
+            list($orderA, $orderB) = $pair;
+            $this->assertTrue($orderA->is($orderB));
+        });
     }
 
     /** @test */
