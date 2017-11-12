@@ -109,4 +109,14 @@ class Concert extends Model
         $this->update(['published_at' => Carbon::now()]);
         $this->addTickets($this->ticket_quantity);
     }
+
+    public function totalTickets(): int
+    {
+        return $this->tickets()->count();
+    }
+
+    public function percentSoldOut(): float
+    {
+        return round(($this->ticketsSold() / $this->totalTickets()) * 100, 2);
+    }
 }
