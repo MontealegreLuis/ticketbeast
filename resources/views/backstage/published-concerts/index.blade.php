@@ -13,8 +13,11 @@
                 </h1>
             </div>
             <div class="pull-right">
-                <p class="lead orders-label">
-                    Orders
+                <p class="orders-label lead">
+                    <span>Orders</span> &nbsp;&nbsp;
+                    <a href="{{ route('backstage.concert-messages.new', $concert) }}">
+                        Message attendees
+                    </a>
                 </p>
             </div>
         </div>
