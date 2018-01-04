@@ -6,6 +6,7 @@
  */
  namespace App\Http\Controllers\Backstage;
 
+use App\Http\Requests\MessageRequest;
 use Auth;
 
 class ConcertMessagesController
@@ -17,7 +18,7 @@ class ConcertMessagesController
         return view('backstage.concert-messages.new', ['concert' => $concert]);
     }
 
-    public function store($id)
+    public function store($id, MessageRequest $request)
     {
         $concert = Auth::user()->concerts()->findOrFail($id);
 

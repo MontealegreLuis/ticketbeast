@@ -30,11 +30,23 @@
                 <div class="alert alert-success m-xs-b-4">Message sent!</div>
             @endif
 
-            <form action="#" method="POST">
+            <form action="{{ url()->route('backstage.concert-messages.store', $concert) }}" method="POST">
                 {{ csrf_field() }}
                 <div class="form-group">
                     <label for="subject">Subject</label>
-                    <input id="subject" name="subject" class="form-control">
+                    <input
+                        id="subject"
+                        name="subject"
+                        class="form-control"
+                        value="{{ old('subject') }}"
+                    >
+                    @if ($errors->has('subject'))
+                        <div class="alert alert-danger">
+                            @foreach ($errors->get('subject') as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
                 <div class="form-group">
                     <label for="message">Message</label>
@@ -43,7 +55,14 @@
                         name="message"
                         id="message"
                         rows="10"
-                    ></textarea>
+                    >{{ old('message') }}</textarea>
+                    @if ($errors->has('message'))
+                        <div class="alert alert-danger">
+                            @foreach ($errors->get('message') as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
                 <div>
                     <button class="btn btn-primary btn-block">Send Now</button>
