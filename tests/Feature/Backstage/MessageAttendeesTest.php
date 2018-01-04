@@ -84,4 +84,37 @@ class MessageAttendeesTest extends TestCase
         $this->assertEquals('My Subject', $message->subject);
         $this->assertEquals('My Message', $message->message);
     }
+
+    /** @test */
+    function promoters_cannot_send_a_new_message_for_other_concerts()
+    {
+        $promoter = factory(User::class)->create();
+        $otherPromoter = factory(User::class)->create();
+        $concert = ConcertFactory::createPublished(['user_id' => $otherPromoter->id,]);
+
+        $response = $this
+            ->actingAs($promoter)
+            ->post("/backstage/concerts/{$concert->id}/messages", [
+                'subject' => 'My subject',
+                'message' => 'My message',
+            ])
+        ;
+
+        $response->assertStatus(404);
+        $this->assertEquals(0, AttendeeMessage::count());
+    }
+
+    /** @test */
+    function guests_cannot_send_a_new_message_for_any_concerts()
+    {
+        $concert = ConcertFactory::createPublished();
+
+        $response = $this->post("/backstage/concerts/{$concert->id}/messages", [
+            'subject' => 'My subject',
+            'message' => 'My message',
+        ]);
+
+        $response->assertRedirect('/login');
+        $this->assertEquals(0, AttendeeMessage::count());
+    }
 }
