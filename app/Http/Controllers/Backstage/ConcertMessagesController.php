@@ -7,6 +7,7 @@
  namespace App\Http\Controllers\Backstage;
 
 use App\Http\Requests\MessageRequest;
+use App\Jobs\SendAttendeeMessage;
 use Auth;
 
 class ConcertMessagesController
@@ -23,6 +24,8 @@ class ConcertMessagesController
         $concert = Auth::user()->concerts()->findOrFail($id);
 
         $message = $concert->attendeeMessages()->create(request(['subject', 'message']));
+
+        SendAttendeeMessage::dispatch($message);
 
         return redirect()
             ->route('backstage.concert-messages.new', $concert)
