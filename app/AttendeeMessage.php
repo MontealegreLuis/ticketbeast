@@ -8,9 +8,16 @@ class AttendeeMessage extends Model
 {
     protected $guarded = [];
 
-    public function recipients()
+    public function orders()
     {
-        return $this->concert->orders()->pluck('email');
+        return $this->concert->orders();
+    }
+
+    public function withChunkedRecipients(int $chunkSize, callable $callback)
+    {
+        $this->orders()->chunk($chunkSize, function ($orders) use ($callback) {
+            $callback($orders->pluck('email'));
+        });
     }
 
     public function concert()
