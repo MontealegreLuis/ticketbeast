@@ -27,7 +27,7 @@
             <h1 class="text-center">New Message</h1>
 
             @if (session()->has('flash'))
-                <div class="alert alert-success m-xs-b-4">Message sent!</div>
+                <div class="alert alert-info">Message sent!</div>
             @endif
 
             <form action="{{ url()->route('backstage.concert-messages.store', $concert) }}" method="POST">
