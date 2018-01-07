@@ -11,6 +11,8 @@ use App\Concert;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Testing\File;
+use Storage;
 use Tests\TestCase;
 
 class AddConcertTest extends TestCase
@@ -104,5 +106,38 @@ class AddConcertTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect("/login");
         $this->assertEquals(0, Concert::count());
+    }
+
+    /** @test */
+    function poster_image_is_uploaded_if_included()
+    {
+        $this->withoutExceptionHandling();
+
+        Storage::fake('s3');
+        $promoter = factory(User::class)->create();
+
+        $file = File::image('concert-poster.png');
+        $response = $this->actingAs($promoter)->post('/backstage/concerts', [
+            'title' => 'No Warning',
+            'subtitle' => 'with Cruel Hand and Backtrack',
+            'additional_information' => 'You must be 19 years of age to attend this concert',
+            'date' => '2017-11-18',
+            'time' => '8:00pm',
+            'venue' => 'The Mosh Pit',
+            'venue_address' => '123 Fake St.',
+            'city' => 'Laraville',
+            'state' => 'ON',
+            'zip' => '12345',
+            'ticket_price' => '32.50',
+            'ticket_quantity' => '75',
+            'poster_image' => $file,
+        ]);
+
+        $this->assertNotNull(Concert::first()->poster_image_path);
+        Storage::disk('s3')->assertExists(Concert::first()->poster_image_path);
+        $this->assertFileEquals(
+            $file->getPathname(),
+            Storage::disk('s3')->path(Concert::first()->poster_image_path)
+        );
     }
 }
