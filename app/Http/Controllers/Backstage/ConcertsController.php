@@ -45,7 +45,7 @@ class ConcertsController extends Controller
             'zip' => request('zip'),
             'additional_information' => request('additional_information'),
             'ticket_quantity' => request('ticket_quantity'),
-            'poster_image_path' => request('poster_image', new NullFile())->store('posters', 's3'),
+            'poster_image_path' => request('poster_image', new NullFile())->store('posters', 'public'),
         ]);
 
         return redirect()->route('backstage.concerts.index');

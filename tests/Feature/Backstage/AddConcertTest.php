@@ -118,7 +118,7 @@ class AddConcertTest extends TestCase
 
         $promoter = factory(User::class)->create();
 
-        Storage::fake('s3');
+        Storage::fake('public');
         $file = File::image('concert-poster.png', 850, 1100);
 
         $response = $this->actingAs($promoter)->post('/backstage/concerts', [
@@ -138,17 +138,17 @@ class AddConcertTest extends TestCase
         ]);
 
         $this->assertNotNull(Concert::first()->poster_image_path);
-        Storage::disk('s3')->assertExists(Concert::first()->poster_image_path);
+        Storage::disk('public')->assertExists(Concert::first()->poster_image_path);
         $this->assertFileEquals(
             $file->getPathname(),
-            Storage::disk('s3')->path(Concert::first()->poster_image_path)
+            Storage::disk('public')->path(Concert::first()->poster_image_path)
         );
     }
 
     /** @test */
     function poster_image_must_be_an_image()
     {
-        Storage::fake('s3');
+        Storage::fake('public');
         session()->setPreviousUrl(url('/backstage/concerts/new'));
         $file = File::create('not-a-poster.pdf');
 
@@ -178,7 +178,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function poster_image_must_be_at_least_400px_wide()
     {
-        Storage::fake('s3');
+        Storage::fake('public');
         session()->setPreviousUrl(url('/backstage/concerts/new'));
         $file = File::image('poster.png', 399, 516);
 
@@ -208,7 +208,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function poster_image_must_letter_aspect_ratio()
     {
-        Storage::fake('s3');
+        Storage::fake('public');
         session()->setPreviousUrl(url('/backstage/concerts/new'));
         $file = File::image('poster.png', 851, 1100);
 
