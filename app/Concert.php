@@ -9,6 +9,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class Concert extends Model
 {
@@ -62,6 +63,16 @@ class Concert extends Model
     public function orderFor($email)
     {
         return $this->orders()->where('email', $email)->get();
+    }
+
+    public function hasPoster(): bool
+    {
+        return $this->poster_image_path !== null;
+    }
+
+    public function posterUrl(): string
+    {
+        return Storage::disk('public')->url($this->poster_image_path);
     }
 
     public function getFormattedDateAttribute()

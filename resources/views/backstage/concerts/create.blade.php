@@ -7,7 +7,7 @@
             <hr>
         </div>
     </div>
-    <form action="/backstage/concerts" method="post">
+    <form action="/backstage/concerts" method="post" enctype="multipart/form-data">
         {{ csrf_field() }}
         <div class="row">
             @if ($errors->any())
@@ -220,6 +220,20 @@
                 </div>
             </div>
             <hr class="col-xs-12 col-md-10 col-md-offset-1">
+        </div>
+        <div class="row">
+            <div class="col col-xs-12 col-md-10 col-md-offset-1">
+                <h2 class="text-base wt-medium m-xs-b-4">Concert Poster</h2>
+                <p class="text-dark-soft text-sm">
+                    Have a sweet poster for this concert? Upload it here and it'll be included on the checkout page.
+                </p>
+            </div>
+            <div class="col col-xs-12 col-md-10 col-md-offset-1">
+                <div class="form-group {{ $errors->first('poster_image', 'has-error') }}">
+                    <label>Poster Image</label>
+                    <input type="file" name="poster_image">
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-xs-12 col-md-10 col-md-offset-1">
