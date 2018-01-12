@@ -8,10 +8,12 @@
 namespace Tests\Feature\Backstage;
 
 use App\Concert;
+use App\Events\ConcertAdded;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\Event;
 use Storage;
 use Tests\TestCase;
 
@@ -262,5 +264,32 @@ class AddConcertTest extends TestCase
         $response->assertRedirect('/backstage/concerts');
         $this->assertTrue($concert->user->is($promoter));
         $this->assertNull($concert->poster_image_path);
+    }
+
+    /** @test */
+    function an_event_is_fired_when_a_concert_is_added()
+    {
+        Event::fake([ConcertAdded::class]);
+        $promoter = factory(User::class)->create();
+
+        $response = $this->actingAs($promoter)->post('/backstage/concerts', [
+            'title' => 'No Warning',
+            'subtitle' => 'with Cruel Hand and Backtrack',
+            'additional_information' => 'You must be 19 years of age to attend this concert',
+            'date' => '2017-11-18',
+            'time' => '8:00pm',
+            'venue' => 'The Mosh Pit',
+            'venue_address' => '123 Fake St.',
+            'city' => 'Laraville',
+            'state' => 'ON',
+            'zip' => '12345',
+            'ticket_price' => '32.50',
+            'ticket_quantity' => '75',
+            'poster_image' => null,
+        ]);
+
+        Event::assertDispatched(ConcertAdded::class, function ($event) {
+            return $event->concert->is(Concert::first());
+        });
     }
 }
