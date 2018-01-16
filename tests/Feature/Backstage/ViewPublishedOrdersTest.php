@@ -17,7 +17,7 @@ use Tests\TestCase;
 class ViewPublishedOrdersTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     /** @test */
     function promoters_can_see_the_orders_for_their_own_concerts()
     {
@@ -122,5 +122,4 @@ class ViewPublishedOrdersTest extends TestCase
 
         $response->assertRedirect('/login');
     }
-
 }

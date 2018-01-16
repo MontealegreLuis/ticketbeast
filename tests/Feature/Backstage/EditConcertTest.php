@@ -194,7 +194,7 @@ class EditConcertTest extends TestCase
         $concert = factory(Concert::class)->create($this->oldInformation([
             'user_id' => $promoter->id,
         ]));
-        session()->setPreviousUrl(url("/backstage/concerts/{$concert->id}/edit"));
+        $this->from("/backstage/concerts/{$concert->id}/edit");
 
         $response = $this
             ->actingAs($promoter)

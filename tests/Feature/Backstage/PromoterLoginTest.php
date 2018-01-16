@@ -42,7 +42,7 @@ class PromoterLoginTest extends TestCase
             'email' => 'jane@example.com',
             'password' => bcrypt('super-secret-password'),
         ]);
-        session()->setPreviousUrl(url('/login'));
+        $this->from('/login');
 
         $response = $this->post('/login', [
             'email' => 'jane@example.com',
@@ -59,7 +59,7 @@ class PromoterLoginTest extends TestCase
     /** @test */
     function logging_in_without_an_account()
     {
-        session()->setPreviousUrl(url('/login'));
+        $this->from('/login');
 
         $response = $this->post('/login', [
             'email' => 'nobody@example.com',

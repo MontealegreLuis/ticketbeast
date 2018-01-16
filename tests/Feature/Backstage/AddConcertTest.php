@@ -118,12 +118,13 @@ class AddConcertTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $promoter = factory(User::class)->create();
-
+        Event::fake([ConcertAdded::class]);
         Storage::fake('public');
+
+        $promoter = factory(User::class)->create();
         $file = File::image('concert-poster.png', 850, 1100);
 
-        $response = $this->actingAs($promoter)->post('/backstage/concerts', [
+        $this->actingAs($promoter)->post('/backstage/concerts', [
             'title' => 'No Warning',
             'subtitle' => 'with Cruel Hand and Backtrack',
             'additional_information' => 'You must be 19 years of age to attend this concert',
@@ -139,11 +140,12 @@ class AddConcertTest extends TestCase
             'poster_image' => $file,
         ]);
 
-        $this->assertNotNull(Concert::first()->poster_image_path);
-        Storage::disk('public')->assertExists(Concert::first()->poster_image_path);
+        $concert = Concert::first();
+        $this->assertNotNull($concert->poster_image_path);
+        Storage::disk('public')->assertExists($concert->poster_image_path);
         $this->assertFileEquals(
             $file->getPathname(),
-            Storage::disk('public')->path(Concert::first()->poster_image_path)
+            Storage::disk('public')->path($concert->poster_image_path)
         );
     }
 
@@ -151,7 +153,7 @@ class AddConcertTest extends TestCase
     function poster_image_must_be_an_image()
     {
         Storage::fake('public');
-        session()->setPreviousUrl(url('/backstage/concerts/new'));
+        $this->from('/backstage/concerts/new');
         $file = File::create('not-a-poster.pdf');
 
         $promoter = factory(User::class)->create();
@@ -181,7 +183,7 @@ class AddConcertTest extends TestCase
     function poster_image_must_be_at_least_400px_wide()
     {
         Storage::fake('public');
-        session()->setPreviousUrl(url('/backstage/concerts/new'));
+        $this->from('/backstage/concerts/new');
         $file = File::image('poster.png', 399, 516);
 
         $promoter = factory(User::class)->create();
@@ -211,7 +213,7 @@ class AddConcertTest extends TestCase
     function poster_image_must_letter_aspect_ratio()
     {
         Storage::fake('public');
-        session()->setPreviousUrl(url('/backstage/concerts/new'));
+        $this->from('/backstage/concerts/new');
         $file = File::image('poster.png', 851, 1100);
 
         $promoter = factory(User::class)->create();
@@ -272,7 +274,7 @@ class AddConcertTest extends TestCase
         Event::fake([ConcertAdded::class]);
         $promoter = factory(User::class)->create();
 
-        $response = $this->actingAs($promoter)->post('/backstage/concerts', [
+        $this->actingAs($promoter)->post('/backstage/concerts', [
             'title' => 'No Warning',
             'subtitle' => 'with Cruel Hand and Backtrack',
             'additional_information' => 'You must be 19 years of age to attend this concert',
