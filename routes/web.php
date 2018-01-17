@@ -19,6 +19,8 @@ Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login', 'Auth\LoginController@login');
 Route::post('/logout', 'Auth\LoginController@logout');
 
+Route::get('/invitations/{code}', 'InvitationsController@show')->name('invitations.show');
+
 Route::group(['middleware' => 'auth', 'prefix' => 'backstage'], function () {
     Route::get('/concerts', 'Backstage\ConcertsController@index')->name('backstage.concerts.index');
     Route::get('/concerts/new', 'Backstage\ConcertsController@create')->name('backstage.concerts.new');
