@@ -8,6 +8,11 @@ class Invitation extends Model
 {
     public static function findByCode(string $code): Invitation
     {
-        return self::where('code', $code)->first();
+        return self::where('code', $code)->firstOrFail();
+    }
+
+    public function hasBeenUsed(): bool
+    {
+        return $this->user_id !== null;
     }
 }
