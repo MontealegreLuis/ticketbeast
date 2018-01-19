@@ -18,6 +18,7 @@ Route::get('/orders/{confirmationNumber}', 'OrdersController@show');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login', 'Auth\LoginController@login');
 Route::post('/logout', 'Auth\LoginController@logout');
+Route::post('/register', 'Auth\RegisterController@register')->name('auth.register');
 
 Route::get('/invitations/{code}', 'InvitationsController@show')->name('invitations.show');
 
