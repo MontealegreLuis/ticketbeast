@@ -110,4 +110,22 @@ class AcceptInvitationTest extends TestCase
         $response->assertStatus(404);
         $this->assertEquals(0, User::count());
     }
+
+    /** @test */
+    function runs_form_validations()
+    {
+        $existingPromoter = factory(User::class)->create(['email' => 'john@example.com']);
+        $this->assertEquals(1, User::count());
+        $invitation = factory(Invitation::class)->create([
+            'code' => 'TESTCODE1234',
+        ]);
+        $response = $this->from('/invitations/TESTCODE1234')->post('/register', [
+            'email' => $existingPromoter,
+            'password' => 'secret',
+            'invitation_code' => 'TESTCODE1234',
+        ]);
+        $response->assertRedirect('/invitations/TESTCODE1234');
+        $response->assertSessionHasErrors('email');
+        $this->assertEquals(1, User::count());
+    }
 }

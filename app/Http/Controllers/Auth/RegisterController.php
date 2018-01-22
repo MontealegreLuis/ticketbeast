@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\InvitationRequest;
 use App\Invitation;
 use App\User;
 use Auth;
@@ -15,7 +16,7 @@ use Hash;
 
 class RegisterController extends Controller
 {
-    public function register()
+    public function register(InvitationRequest $request)
     {
         $invitation = Invitation::findByCode(request('invitation_code'));
 
