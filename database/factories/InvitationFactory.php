@@ -9,5 +9,8 @@ use App\Invitation;
 use Faker\Generator;
 
 $factory->define(Invitation::class, function (Generator $faker) {
-    return [];
+    return [
+        'email' => 'somebody@example.com',
+        'code' => 'TESTCODE1234',
+    ];
 });
