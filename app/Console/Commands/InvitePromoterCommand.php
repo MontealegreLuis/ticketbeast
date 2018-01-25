@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\IdentifierGenerator;
 use App\Invitation;
+use App\Mail\InvitationEmail;
 use Illuminate\Console\Command;
+use Mail;
 
 class InvitePromoterCommand extends Command
 {
@@ -36,16 +38,11 @@ class InvitePromoterCommand extends Command
         $this->generator = $generator;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
     public function handle()
     {
-        $invitation = Invitation::create([
+        Invitation::create([
             'code' => $this->generator->generateConfirmationNumber(),
             'email' => $this->argument('email'),
-        ]);
+        ])->send();
     }
 }
