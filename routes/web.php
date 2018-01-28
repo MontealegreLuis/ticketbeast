@@ -32,4 +32,6 @@ Route::group(['middleware' => 'auth', 'prefix' => 'backstage'], function () {
     Route::get('/published-concerts/{id}/orders', 'Backstage\PublishedConcertOrdersController@index')->name('backstage.published-concert.index');
     Route::get('/concerts/{id}/messages/new', 'Backstage\ConcertMessagesController@create')->name('backstage.concert-messages.new');
     Route::post('/concerts/{id}/messages', 'Backstage\ConcertMessagesController@store')->name('backstage.concert-messages.store');
+
+    Route::get('/stripe-connect/authorize', 'Backstage\StripeConnectController@authorizeRedirect');
 });
