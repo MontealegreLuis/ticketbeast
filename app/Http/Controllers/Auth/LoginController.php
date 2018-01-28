@@ -13,7 +13,7 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    protected $redirectTo = '/backstage/concerts/new';
+    protected $redirectTo = '/backstage/concerts';
     protected $loginPath = '/login';
 
     public function __construct()

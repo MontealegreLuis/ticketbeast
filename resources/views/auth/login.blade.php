@@ -12,12 +12,11 @@
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="text" name="email" id="email" class="form-control">
+                            <input type="text" name="email" id="email" class="form-control" value="{{ old('email') }}">
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" name="password" id="password"
-                                   class="form-control">
+                            <input type="password" name="password" id="password" class="form-control">
                         </div>
                         <button class="btn btn-block btn-primary">Log in</button>
                         @if($errors->any())
