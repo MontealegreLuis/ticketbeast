@@ -8,6 +8,11 @@ use Zttp\Zttp;
 
 class StripeConnectController extends Controller
 {
+    public function connect()
+    {
+        return view('backstage.stripe-connect.connect');
+    }
+
     public function authorizeRedirect()
     {
         return redirect(sprintf(
