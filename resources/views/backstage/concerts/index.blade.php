@@ -40,7 +40,7 @@
                                 </p>
                             </div>
                             <a
-                                href="{{ route('backstage.published-concert.index', $concert) }}"
+                                href="{{ route('backstage.published-concerts.index', $concert) }}"
                                 class="btn btn-primary btn-block">
                                 Manage
                             </a>
