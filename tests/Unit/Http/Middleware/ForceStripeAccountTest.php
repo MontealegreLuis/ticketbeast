@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Route;
 use Tests\TestCase;
 
 class ForceStripeAccountTest extends TestCase
@@ -52,5 +53,32 @@ class ForceStripeAccountTest extends TestCase
         $middleware->handle($request, Closure::fromCallable($next));
 
         $this->assertSame($request, $next->wasCalledWithRequest);
+    }
+
+    /**
+     * @test
+     * @dataProvider backstageRoutes
+     */
+    function middleware_is_applied_to_all_backstage_routes(string $route)
+    {
+        $this->assertContains(
+            ForceStripeAccount::class,
+            Route::getRoutes()->getByName($route)->gatherMiddleware()
+        );
+    }
+
+    function backstageRoutes(): array
+    {
+        return [
+            'backstage.concerts.index' => ['backstage.concerts.index'],
+            'backstage.concerts.new' => ['backstage.concerts.new'],
+            'backstage.concerts.store' => ['backstage.concerts.store'],
+            'backstage.concerts.edit' => ['backstage.concerts.edit'],
+            'backstage.concerts.update' => ['backstage.concerts.update'],
+            'backstage.published-concerts.index' => ['backstage.published-concerts.index'],
+            'backstage.published-concerts.store' => ['backstage.published-concerts.store'],
+            'backstage.concert-messages.new' => ['backstage.concert-messages.new'],
+            'backstage.concert-messages.store' => ['backstage.concert-messages.store'],
+        ];
     }
 }

@@ -3,10 +3,10 @@
 namespace Tests\Browser;
 
 use App\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Laravel\Dusk\Browser;
 use Stripe\Account;
 use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class ConnectWithStripeTest extends DuskTestCase
 {
