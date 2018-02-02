@@ -20,7 +20,7 @@ class StripePaymentGateway implements PaymentGateway
         $this->apiKey = $apiKey;
     }
 
-    public function charge(int $amount, string $token): \App\Billing\Charge
+    public function charge(int $amount, string $token, string $accountId): \App\Billing\Charge
     {
         try {
             $stripeCharge = Charge::create([

@@ -34,7 +34,7 @@ class FakePaymentGateway implements PaymentGateway
         return $token;
     }
 
-    public function charge(int $amountInCents, string $token): Charge
+    public function charge(int $amountInCents, string $token, string $accountId): Charge
     {
         if (is_callable($this->beforeChargeCallback)) {
             $callback = $this->beforeChargeCallback;
@@ -47,12 +47,20 @@ class FakePaymentGateway implements PaymentGateway
         return $this->charges[] = new Charge([
             'amount' => $amountInCents,
             'card_last_four' => substr($this->tokens[$token], -4),
+            'destination' => $accountId,
         ]);
     }
 
     public function totalCharges(): int
     {
         return $this->charges->map->amount()->sum();
+    }
+
+    public function totalChargesFor(string $accountId): int
+    {
+        return $this->charges->filter(function ($charge) use ($accountId) {
+            return $charge->destination() === $accountId;
+        })->map->amount()->sum();
     }
 
     public function beforeCharge(callable $callback): void

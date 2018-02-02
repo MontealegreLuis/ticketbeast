@@ -18,13 +18,13 @@ abstract class PaymentGatewayTest extends TestCase
         $paymentGateway = $this->newPaymentGateway();
 
         $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
-            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
+            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken(), 'test_acct_1234');
         });
 
         $this->assertCount(1, $newCharges);
         $this->assertEquals(2500, $newCharges->map->amount()->sum());
     }
-    
+
     /** @test */
     function it_get_details_about_a_successful_charge()
     {
@@ -32,11 +32,13 @@ abstract class PaymentGatewayTest extends TestCase
 
         $charge = $paymentGateway->charge(
             2500,
-            $paymentGateway->getValidTestToken()
+            $paymentGateway->getValidTestToken(),
+            'test_acct_1234'
         );
 
         $this->assertEquals('4242', $charge->cardLastFour());
         $this->assertEquals(2500, $charge->amount());
+        $this->assertEquals('test_acct_1234', $charge->destination());
     }
 
     /** @test */
@@ -45,21 +47,25 @@ abstract class PaymentGatewayTest extends TestCase
         $paymentGateway = $this->newPaymentGateway();
         $paymentGateway->charge(
             2000,
-            $paymentGateway->getValidTestToken()
+            $paymentGateway->getValidTestToken(),
+            'test_acct_1234'
         );
         $paymentGateway->charge(
             3000,
-            $paymentGateway->getValidTestToken()
+            $paymentGateway->getValidTestToken(),
+            'test_acct_1234'
         );
 
         $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
             $paymentGateway->charge(
                 4000,
-                $paymentGateway->getValidTestToken()
+                $paymentGateway->getValidTestToken(),
+                'test_acct_1234'
             );
             $paymentGateway->charge(
                 5000,
-                $paymentGateway->getValidTestToken()
+                $paymentGateway->getValidTestToken(),
+                'test_acct_1234'
             );
         });
 
@@ -74,7 +80,7 @@ abstract class PaymentGatewayTest extends TestCase
 
         $newCharges = $paymentGateway->newChargesDuring(function (PaymentGateway $paymentGateway) {
             try {
-                $paymentGateway->charge(2500, 'invalid-token');
+                $paymentGateway->charge(2500, 'invalid-token', 'test_acct_1234');
             } catch (PaymentFailed $ignore) {
                 return;
             }
