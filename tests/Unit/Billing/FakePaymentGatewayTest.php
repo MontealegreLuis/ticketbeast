@@ -6,9 +6,9 @@
  */
 namespace Tests\Unit\Billing;
 
+use App\Billing\FakePaymentGateway;
 use App\Billing\PaymentGateway;
 use Tests\ContractTests\PaymentGatewayTest;
-use Tests\Feature\FakePaymentGateway;
 
 class FakePaymentGatewayTest extends PaymentGatewayTest
 {

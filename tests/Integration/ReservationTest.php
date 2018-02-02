@@ -6,13 +6,13 @@
  */
 namespace Tests\Integration;
 
+use App\Billing\FakePaymentGateway;
 use App\Concert;
 use App\IdentifierGenerator;
 use App\Reservation;
 use App\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
-use Tests\Feature\FakePaymentGateway;
 use Tests\TestCase;
 
 class ReservationTest extends TestCase
@@ -39,12 +39,13 @@ class ReservationTest extends TestCase
         $order = $reservation->complete(
             $paymentGateway,
             $paymentGateway->getValidTestToken(),
-            $generator
+            $generator,
+            'test_acct_1234'
         );
 
         $this->assertEquals('john@example.com', $order->email);
         $this->assertEquals(3, $order->ticketsQuantity());
         $this->assertEquals(3600, $order->amount);
-        $this->assertEquals(3600, $paymentGateway->totalCharges());
+        $this->assertEquals(3600, $paymentGateway->totalChargesFor('test_acct_1234'));
     }
 }

@@ -6,10 +6,12 @@
  */
 namespace Tests\Feature;
 
+use App\Billing\FakePaymentGateway;
 use App\Billing\PaymentGateway;
 use App\Concert;
 use App\IdentifierGenerator;
 use App\Mail\OrderConfirmationEmail;
+use App\User;
 use ConcertFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse;
@@ -36,9 +38,11 @@ class PurchaseTicketsTest extends TestCase
             ->andReturn('ticket-code-1', 'ticket-code-2', 'ticket-code-3')
         ;
         $this->app->instance(IdentifierGenerator::class, $generator);
+        $promoter = factory(User::class)->create(['stripe_account_id' => 'test_acct_1234']);
         $concert = ConcertFactory::createPublished([
             'ticket_price' => 3250,
             'ticket_quantity' => 3,
+            'user_id' => $promoter,
         ]);
 
         $response = $this->orderTicketsFor($concert);

@@ -34,7 +34,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "App\\Billing\\": "tests/Billing"
         }
     },
     "extra": {

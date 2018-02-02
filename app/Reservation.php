@@ -48,10 +48,11 @@ class Reservation
     public function complete(
         PaymentGateway $paymentGateway,
         string $paymentToken,
-        IdentifierGenerator $generator
+        IdentifierGenerator $generator,
+        string $accountId
     ): Order
     {
-        $charge = $paymentGateway->charge($this->totalCost(), $paymentToken);
+        $charge = $paymentGateway->charge($this->totalCost(), $paymentToken, $accountId);
         return Order::forPurchase(
             $this->tickets(),
             $this->email(),

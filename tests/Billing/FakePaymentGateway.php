@@ -4,11 +4,7 @@
  *
  * This source file is subject to the license that is bundled with this package in the file LICENSE.
  */
-namespace Tests\Feature;
-
-use App\Billing\Charge;
-use App\Billing\PaymentFailed;
-use App\Billing\PaymentGateway;
+namespace App\Billing;
 
 class FakePaymentGateway implements PaymentGateway
 {
