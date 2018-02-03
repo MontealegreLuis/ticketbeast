@@ -32,7 +32,8 @@ class StripePaymentGateway implements PaymentGateway
 
             return new \App\Billing\Charge([
                 'amount' => $stripeCharge['amount'],
-                'card_last_four' => $stripeCharge['source']['last4']
+                'card_last_four' => $stripeCharge['source']['last4'],
+                'destination' => $accountId,
             ]);
 
         } catch (InvalidRequest $e) {
