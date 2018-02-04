@@ -2,7 +2,10 @@
 
 use App\Billing\FakePaymentGateway;
 use App\Concert;
+use App\RandomIdentifierGenerator;
+use App\User;
 use Carbon\Carbon;
+use Faker\Factory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,14 +17,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
         $gateway = new FakePaymentGateway;
-        $promoter = factory(App\User::class)->create([
+        $promoter = factory(User::class)->create([
             'email' => "luis@example.com",
             'password' => bcrypt('secret'),
         ]);
 
-        $concert  = factory(Concert::class)->states('published')->create([
+        $concert  = ConcertFactory::createPublished([
             'user_id' => $promoter->id,
             'title' => 'The red chord',
             'subtitle' => 'with Animosity and the Lethargy',
@@ -36,10 +39,18 @@ class DatabaseSeeder extends Seeder
             'ticket_quantity' => 250,
         ]);
 
+        $generator = new RandomIdentifierGenerator(env('TICKET_CODE_SALT'));
+
         foreach(range(1, 50) as $i) {
             Carbon::setTestNow(Carbon::instance($faker->dateTimeBetween('-2 months')));
-            $concert->reserveTickets(rand(1, 4), $faker->safeEmail)
-                ->complete($gateway, $gateway->getValidTestToken($faker->creditCardNumber), 'test_acct_1234');
+            $concert
+                ->reserveTickets(rand(1, 4), $faker->safeEmail)
+                ->complete(
+                    $gateway,
+                    $gateway->getValidTestToken($faker->creditCardNumber),
+                    $generator,
+                    'test_acct_1234'
+                );
         }
 
         Carbon::setTestNow();

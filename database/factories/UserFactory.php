@@ -14,8 +14,6 @@ use Faker\Generator as Faker;
 */
 
 $factory->define(App\User::class, function (Faker $faker) {
-    static $password;
-
     return [
         'email' => $faker->unique()->safeEmail,
         'password' => '$2y$10$OExhSFi9YnXROYfb6TQqAeru74fJ0NDVrDQ5cdKi/3TNpxqm50MMu', // secret
